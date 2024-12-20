@@ -46,20 +46,8 @@ class Fun(commands.Cog):
             ) as request:
                 if request.status == 200:
                     data = await request.json()
-                    await ctx.send(data["text"])
-                else:
-                    await ctx.send("There was an error with the API, try again later.")
-
-
-    async def randomfact(self, ctx: Context) -> None:
-        """ Tell a random fact """
-        async with aiohttp.ClientSession() as session:
-            async with session.get(
-                "https://uselessfacts.jsph.pl/random.json?language=en"
-            ) as request:
-                if request.status == 200:
-                    data = await request.json()
-                    await ctx.send(data["text"])
+                    text = data["text"]
+                    await ctx.send(text.replace("`", "'"))
                 else:
                     await ctx.send("There was an error with the API, try again later.")
 
