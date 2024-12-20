@@ -54,36 +54,27 @@ class Fun(commands.Cog):
 
     @commands.hybrid_command(
         name="meme",
-        description="Post a random meme"
+        description="Send a random meme from reddit"
     )
     async def meme(self, ctx: Context) -> None:
         """ Send a random meme """
         await ctx.defer()
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                "https://frenchnoodles.xyz/api/endpoints/randommeme"
+                "https://meme-api.com/gimme"
             ) as request:
                 if request.status == 200:
-                    image = io.BytesIO(await request.read())
-                    await ctx.send(file=discord.File(image, "meme.png"))
+                    data = await request.json()
+                    embed = discord.Embed(
+                        title=data['title'],
+                        url=data['postLink'],
+                        color=EMBED_COLOR
+                        )
+                    embed.set_image(url=data['url'])
+                    embed.set_footer(text=f"Posted by @{data['author']} on r/{data['subreddit']}")
+                    await ctx.send(embed=embed)
                 else:
                     await ctx.send("There was an error with the API, try again later.")
-        
-        # async with aiohttp.ClientSession() as session:
-        #     async with session.get(
-        #         "https://api.popcat.xyz/meme"
-        #     ) as request:
-        #         if request.status == 200:
-        #             data = await request.json()
-        #             embed = discord.Embed(
-        #                 title=data['title'],
-        #                 url=data['url'],
-        #                 color=EMBED_COLOR
-        #             )
-        #             embed.set_image(url=data['image'])
-        #             await ctx.send(embed=embed)
-        #         else:
-        #             await ctx.send("There was an error with the API, try again later.")
 
 
     @commands.hybrid_command(
