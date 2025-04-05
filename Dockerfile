@@ -1,4 +1,4 @@
-FROM python:3.12-alpine
+FROM python:3.13-alpine AS builder
 
 # set labels
 ARG IMAGE_BUILD_DATE
@@ -9,19 +9,31 @@ LABEL org.opencontainers.image.description="A simple discord bot made with disco
 LABEL org.opencontainers.image.source=https://github.com/tibor309/orbit
 LABEL org.opencontainers.image.url=https://github.com/tibor309/orbit/packages
 LABEL org.opencontainers.image.licenses=GPL-3.0
-LABEL org.opencontainers.image.base.name="python:3.12-alpine"
+LABEL org.opencontainers.image.base.name="python:3.13-alpine"
 
-# install packages 
-RUN \
-    apk add --no-interactive build-base
-
-# copy files
+# set environment for builder
 WORKDIR /app
-COPY . .
+ENV PATH="/app/venv/bin:$PATH"
 
-# install requirements
+# set venv and copy requirements
+RUN python -m venv /app/venv
+COPY requirements.txt .
+
+# install packages
 RUN \
-    pip3 install -r requirements.txt
+    apk add --no-cache --no-interactive build-base && \
+    pip install --no-cache-dir -r requirements.txt
+
+
+FROM python:3.13-alpine
+
+# set environment
+WORKDIR /app
+ENV PATH="/app/venv/bin:$PATH"
+
+# copy files from builder
+COPY . .
+COPY --from=builder /app/venv /app/venv
 
 # run the bot
 CMD ["python3", "main.py"]
