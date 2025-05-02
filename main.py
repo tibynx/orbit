@@ -1,4 +1,4 @@
-"Imports"
+"""Imports"""
 import logging
 import os
 
@@ -15,7 +15,7 @@ intents.message_content = True  # Enabe message content intent for prefixed comm
 
 # Setup both of the loggers
 class LoggingFormatter(logging.Formatter):
-    "Configure appearance of logs"
+    """ Configure appearance of logs """
     # Colors
     black = "\x1b[30m"
     red = "\x1b[31m"
@@ -65,7 +65,7 @@ logger.addHandler(file_handler)
 
 
 class DiscordBot(commands.Bot):
-    "Create discord bot"
+    """ Create discord bot """
     def __init__(self) -> None:
         super().__init__(command_prefix=commands.when_mentioned_or(PREFIX), intents=intents)
         self.logger = logger
@@ -109,7 +109,7 @@ class DiscordBot(commands.Bot):
 
     # Log command execution
     async def on_command_completion(self, ctx) -> None:
-        "Log when someone uses a command"
+        """ Log when someone uses a command """
         full_command_name = ctx.command.qualified_name
         split = full_command_name.split(" ")
         executed_command = str(split[0])
@@ -121,7 +121,7 @@ class DiscordBot(commands.Bot):
 
     # Log command errors
     async def on_command_error(self, ctx, error) -> None:
-        "Log command errors"
+        """ Log command errors """
 
         # command is on cooldown
         if isinstance(error, commands.CommandOnCooldown):

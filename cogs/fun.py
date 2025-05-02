@@ -1,4 +1,4 @@
-"Import modules"
+""" Import modules """
 import aiohttp
 import io
 import random
@@ -189,5 +189,5 @@ class Fun(commands.Cog):
 
 
 async def setup(bot):
-    "Add the cog to the bot"
+    """ Add the cog to the bot """
     await bot.add_cog(Fun(bot))
