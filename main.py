@@ -11,7 +11,7 @@ from settings import PREFIX, TOKEN
 # Set intents
 intents = discord.Intents.default()
 intents.members = True # Enable for user counting
-intents.message_content = True  # Enabe message content intent for prefixed commands
+intents.message_content = True  # Enable message content intent for prefixed commands
 
 # Setup both of the loggers
 class LoggingFormatter(logging.Formatter):
@@ -169,7 +169,8 @@ class DiscordBot(commands.Bot):
         elif isinstance(error, commands.MissingRequiredArgument):
             embed = discord.Embed(
                 title="Error!",
-                # We need to capitalize because the command arguments have no capital letter in the code and they are the first word in the error message.
+                # We need to capitalize because the command arguments have no capital letter in the code, and they
+                # are the first word in the error message.
                 description=str(error).capitalize(),
                 color=0xE02B2B,
             )
