@@ -1,4 +1,4 @@
-"Import modules"
+""" Import modules """
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
@@ -163,5 +163,5 @@ class General(commands.Cog):
 
 
 async def setup(bot):
-    "Add the cog to the bot"
+    """ Add the cog to the bot """
     await bot.add_cog(General(bot))
