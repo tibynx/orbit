@@ -25,7 +25,7 @@ class Fun(commands.Cog):
         """ Generate a petpet gif """
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                f"https://api.popcat.xyz/pet?image={member.display_avatar}"
+                f"https://api.popcat.xyz/v2/pet?image={member.display_avatar}"
             ) as request:
                 if request.status == 200:
                     image = io.BytesIO(await request.read())
@@ -125,20 +125,20 @@ class Fun(commands.Cog):
         await ctx.defer()
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                "https://api.popcat.xyz/periodic-table/random"
+                "https://api.popcat.xyz/v2/periodic-table/random"
             ) as request:
                 if request.status == 200:
                     data = await request.json()
                     embed = discord.Embed(
-                        title=data['name'], description=data['summary'], color=EMBED_COLOR
+                        title=data['message']['name'], description=data['message']['summary'], color=EMBED_COLOR
                     )
-                    embed.add_field(name="Symbol", value=data['symbol'])
-                    embed.add_field(name="Phase", value=data['phase'])
-                    embed.add_field(name="Period", value=data['period'])
-                    embed.add_field(name="Atomic Number", value=data['atomic_number'])
-                    embed.add_field(name="Atomic Mass", value=data['atomic_mass'])
-                    embed.add_field(name="Discovered By", value=data['discovered_by'])
-                    embed.set_thumbnail(url=data['image'])
+                    embed.add_field(name="Symbol", value=data['message']['symbol'])
+                    embed.add_field(name="Phase", value=data['message']['phase'])
+                    embed.add_field(name="Period", value=data['message']['period'])
+                    embed.add_field(name="Atomic Number", value=data['message']['atomic_number'])
+                    embed.add_field(name="Atomic Mass", value=data['message']['atomic_mass'])
+                    embed.add_field(name="Discovered By", value=data['message']['discovered_by'])
+                    embed.set_thumbnail(url=data['message']['image'])
                     await ctx.send(embed=embed)
                 else:
                     await ctx.send("There was an error with the API, please try again later.")
@@ -153,17 +153,17 @@ class Fun(commands.Cog):
         await ctx.defer()
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                "https://api.popcat.xyz/randomcolor"
+                "https://api.popcat.xyz/v2/randomcolor"
             ) as request:
                 if request.status == 200:
                     data = await request.json()
-                    hex = data['hex']
+                    hex = data['message']['hex']
                     def rgb(hex): # convert to rgb
                         return tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
-                    embed = discord.Embed(title=data['name'], color=EMBED_COLOR)
+                    embed = discord.Embed(title=data['message']['name'], color=EMBED_COLOR)
                     embed.add_field(name="HEX", value=f"#{hex}")
                     embed.add_field(name="RGB", value=f"rgb{rgb(hex)}")
-                    embed.set_thumbnail(url=data['image'])
+                    embed.set_thumbnail(url=data['message']['image'])
                     await ctx.send(embed=embed)
                 else:
                     await ctx.send("There was an error with the API, please try again later.")
