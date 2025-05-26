@@ -9,6 +9,7 @@ from discord.ext.commands import Context
 
 from settings import EMBED_COLOR
 
+# TODO: Implement popcat.xyz API's new error checking system
 
 class Fun(commands.Cog):
     """ Create cog for commands """
