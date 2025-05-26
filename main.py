@@ -1,4 +1,3 @@
-"""Imports"""
 import logging
 import os
 
@@ -7,6 +6,9 @@ from discord.ext import commands
 
 # Import variables
 from settings import PREFIX, TOKEN
+
+# TODO: Remove unnecessary docstrings
+# TODO: Add descriptions to slash command options
 
 # Set intents
 intents = discord.Intents.default()
@@ -38,7 +40,7 @@ class LoggingFormatter(logging.Formatter):
 
     def format(self, record):
         log_color = self.COLORS[record.levelno]
-        log_format = "(black){asctime}(reset) (levelcolor){levelname:<8}(reset) (green){name}(reset) {message}"
+        log_format = "(black)[{asctime}](reset) (levelcolor)[{levelname:<8}](reset) (green){name}:(reset) {message}"
         log_format = log_format.replace("(black)", self.black + self.bold)
         log_format = log_format.replace("(reset)", self.reset)
         log_format = log_format.replace("(levelcolor)", log_color)
@@ -56,7 +58,8 @@ console_handler.setFormatter(LoggingFormatter())
 
 # File handler
 file_handler = logging.FileHandler(filename="discord.log", encoding="utf-8", mode="w")
-file_handler_formatter = logging.Formatter("[{asctime}] [{levelname:<8}] {name}: {message}", "%Y-%m-%d %H:%M:%S", style="{")
+file_handler_log_format = "[{asctime}] [{levelname:<8}] {name}: {message}"
+file_handler_formatter = logging.Formatter(file_handler_log_format, "%Y-%m-%d %H:%M:%S", style="{")
 file_handler.setFormatter(file_handler_formatter)
 
 # Add the handlers
@@ -69,7 +72,6 @@ class DiscordBot(commands.Bot):
     def __init__(self) -> None:
         super().__init__(command_prefix=commands.when_mentioned_or(PREFIX), intents=intents)
         self.logger = logger
-
 
 
     # Load cogs
@@ -109,74 +111,72 @@ class DiscordBot(commands.Bot):
 
     # Log command execution
     async def on_command_completion(self, ctx) -> None:
-        """ Log when someone uses a command """
         full_command_name = ctx.command.qualified_name
         split = full_command_name.split(" ")
         executed_command = str(split[0])
         if ctx.guild is not None:
-            self.logger.info(f"Executed {executed_command} command in '{ctx.guild.name}' (ID: {ctx.guild.id}) by {ctx.author} (ID: {ctx.author.id})")
+            self.logger.info(f"User {ctx.author} (ID: {ctx.author.id}) executed '{executed_command}' command in the guild '{ctx.guild.name}' (ID: {ctx.guild.id})")
         else:
-            self.logger.info(f"Executed '{executed_command}' command by {ctx.author} (ID: {ctx.author.id}) in DMs")
+            self.logger.info(f"User {ctx.author} (ID: {ctx.author.id}) executed '{executed_command}' command")
 
 
     # Log command errors
     async def on_command_error(self, ctx, error) -> None:
-        """ Log command errors """
+        # Get the command name
+        command_name = ctx.command.name if ctx.command else "Unknown command"
+
+        # Create embed
+        embed = discord.Embed(
+            title="Error",
+            color=0xE02B2B
+        )
 
         # command is on cooldown
         if isinstance(error, commands.CommandOnCooldown):
             minutes, seconds = divmod(error.retry_after, 60)
             hours, minutes = divmod(minutes, 60)
             hours = hours % 24
-            embed = discord.Embed(
-                description=f"**Please slow down** - You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.",
-                color=0xE02B2B,
-            )
-            await ctx.send(embed=embed)
+            embed.description=f"You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}."
+            return await ctx.send(embed=embed)
 
         # bot owner only command
         elif isinstance(error, commands.NotOwner):
-            embed = discord.Embed(
-                description="You are not the owner of the bot!", color=0xE02B2B
-            )
+            embed.description="You are not the owner of the bot!"
             await ctx.send(embed=embed)
+
             if ctx.guild:
-                self.logger.warning(f"{ctx.author} (ID: {ctx.author.id}) tried to execute an owner only command in the guild {ctx.guild.name} (ID: {ctx.guild.id}), but the user is not an owner of the bot.")
+                self.logger.warning(f"User {ctx.author} (ID: {ctx.author.id}) tried to execute an owner only command in the guild '{ctx.guild.name}' (ID: {ctx.guild.id})")
+                return None
             else:
-                self.logger.warning(f"{ctx.author} (ID: {ctx.author.id}) tried to execute an owner only command in the bot's DMs, but the user is not an owner of the bot.")
+                self.logger.warning(f"User {ctx.author} (ID: {ctx.author.id}) tried to execute an owner only command")
+                return None
 
         # user doesn't have enough permissions
         elif isinstance(error, commands.MissingPermissions):
-            embed = discord.Embed(
-                description="You are missing the permission(s) `"
-                + ", ".join(error.missing_permissions)
-                + "` to execute this command!",
-                color=0xE02B2B,
-            )
-            await ctx.send(embed=embed)
+            embed.description="You are missing permission(s) to execute this command:\n`" + ", ".join(error.missing_permissions) + "`"
+            return await ctx.send(embed=embed)
 
         # bot doesn't have enough permissions
         elif isinstance(error, commands.BotMissingPermissions):
-            embed = discord.Embed(
-                description="I am missing the permission(s) `"
-                + ", ".join(error.missing_permissions)
-                + "` to fully perform this command!",
-                color=0xE02B2B,
-            )
-            await ctx.send(embed=embed)
+            embed.description="I am missing the permission(s) to execute this command:\n`" + ", ".join(error.missing_permissions) + "`"
+            return await ctx.send(embed=embed)
 
         # missing command arguments
         elif isinstance(error, commands.MissingRequiredArgument):
-            embed = discord.Embed(
-                title="Error!",
-                # We need to capitalize because the command arguments have no capital letter in the code, and they
-                # are the first word in the error message.
-                description=str(error).capitalize(),
-                color=0xE02B2B,
-            )
-            await ctx.send(embed=embed)
+            # We need to capitalize because the command arguments have no capital letter in the code, and they're the first word in the error message.
+            embed.description="You're missing a required argument for this command:\n" + f"`{str(error).capitalize()}`"
+            return await ctx.send(embed=embed)
+
+        # bot lacks permissions (discord.errors.Forbidden)
+        elif isinstance(error, discord.errors.Forbidden):
+            embed.description="I do not have the required permissions to execute this command!",
+            return await ctx.send(embed=embed)
+
+        # handle other errors
         else:
-            raise error
+            embed.description="An unhandled exception occurred while executing the command:\n" + f"`{str(error)}`"
+            self.logger.error(f"Unhandled exception in command '{command_name}': {str(error)}")
+            return await ctx.send(embed=embed)
 
 
 # Run the bot
