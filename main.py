@@ -141,14 +141,11 @@ class DiscordBot(commands.Bot):
 
         # bot owner only command
         elif isinstance(error, commands.NotOwner):
-            embed.description="You are not the owner of the bot!"
-            await ctx.send(embed=embed)
-
             if ctx.guild:
-                self.logger.warning(f"User {ctx.author} (ID: {ctx.author.id}) tried to execute an owner only command in the guild '{ctx.guild.name}' (ID: {ctx.guild.id})")
+                self.logger.warning(f"User {ctx.author} (ID: {ctx.author.id}) tried to execute '{command_name}' command in the guild '{ctx.guild.name}' (ID: {ctx.guild.id})")
                 return None
             else:
-                self.logger.warning(f"User {ctx.author} (ID: {ctx.author.id}) tried to execute an owner only command")
+                self.logger.warning(f"User {ctx.author} (ID: {ctx.author.id}) tried to execute '{command_name}' command")
                 return None
 
         # user doesn't have enough permissions
