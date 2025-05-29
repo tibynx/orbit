@@ -109,6 +109,17 @@ class DiscordBot(commands.Bot):
         await self.process_commands(message)
 
 
+    # Log guild join
+    async def on_guild_join(self, guild: discord.Guild) -> None:
+        """Log when the bot joins a guild"""
+        self.logger.info(f"Joined guild '{guild.name}' (ID: {guild.id}) with {len(guild.members)} member(s), the guild owner is {guild.owner} (ID: {guild.owner.id})")
+
+    # Log guild leave
+    async def on_guild_remove(self, guild: discord.Guild) -> None:
+        """Log when the bot leaves a guild"""
+        self.logger.info(f"Left guild '{guild.name}' (ID: {guild.id}) with {len(guild.members)} member(s), the guild owner is {guild.owner} (ID: {guild.owner.id})")
+
+
     # Log command execution
     async def on_command_completion(self, ctx) -> None:
         full_command_name = ctx.command.qualified_name
