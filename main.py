@@ -175,6 +175,30 @@ class DiscordBot(commands.Bot):
             embed.description="You're missing a required argument for this command:\n" + f"`{str(error).capitalize()}`"
             return await ctx.send(embed=embed)
 
+        # invalid user
+        elif isinstance(error, commands.MemberNotFound):
+            embed.description="The specified member cannot be found!"
+            return await ctx.send(embed=embed)
+
+        # invalid server
+        elif isinstance(error, commands.GuildNotFound):
+            embed.description="The specified guild cannot be found!"
+            return await ctx.send(embed=embed)
+
+        # invalid role
+        elif isinstance(error, commands.RoleNotFound):
+            embed.description="The specified role cannot be found!"
+            return await ctx.send(embed=embed)
+
+        # invalid channel
+        elif isinstance(error, commands.ChannelNotFound):
+            embed.description="The specified channel cannot be found!"
+            return await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.MessageNotFound):
+            embed.description="The specified message cannot be found!"
+            return await ctx.send(embed=embed)
+
         # bot lacks permissions (discord.errors.Forbidden)
         elif isinstance(error, discord.errors.Forbidden):
             embed.description="I do not have the required permissions to execute this command!",
