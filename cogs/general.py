@@ -1,4 +1,3 @@
-""" Import modules """
 import discord
 from discord.ext import commands
 from discord.ext.commands import Context
@@ -7,20 +6,20 @@ from settings import PREFIX, EMBED_COLOR
 
 
 class General(commands.Cog):
-    """ Create cog for commands """
     def __init__(self, bot):
         self.bot = bot
 
 
     @commands.hybrid_command(
         name="ping",
-        description="Check if the bot is alive",
+        description="Check bot latency",
     )
     async def ping(self, ctx: Context) -> None:
-        """ Check if the bot is alive """
+        """Check bot latency"""
+        latency = round(self.bot.latency * 1000)
         embed = discord.Embed(
             title="🏓 Pong!",
-            description=f"The bot latency is {round(self.bot.latency * 1000)}ms.",
+            description=f"The bot latency is {latency}ms.",
             color=EMBED_COLOR,
         )
         await ctx.send(embed=embed)
@@ -32,7 +31,7 @@ class General(commands.Cog):
         description="Show user avatar"
         )
     async def avatar_primary(self, ctx: Context, member: discord.Member) -> None:
-        """ Show user avatar """
+        """Show user avatar"""
         embed = discord.Embed(
             title=f"{member.display_name}'s primary avatar",
             color=EMBED_COLOR
@@ -47,7 +46,7 @@ class General(commands.Cog):
         description="Show user banner"
     )
     async def banner_user(self, ctx: Context, member: discord.Member) -> None:
-        """ Show user banner """
+        """Show user banner"""
         if member.banner == None:
             embed = discord.Embed(
                 title=f"{member.display_name} doesn't have a banner",
@@ -68,7 +67,7 @@ class General(commands.Cog):
         description="Get some info about the bot"
     )
     async def botinfo(self, ctx: Context) -> None:
-        """ Get some info about the bot """
+        """Get some info about the bot"""
         embed = discord.Embed(title="Bot Info", color=EMBED_COLOR)
         embed.add_field(
             name="Username",
@@ -101,7 +100,7 @@ class General(commands.Cog):
         description="Get info about a user"
     )
     async def whois(self, ctx: Context, member: discord.Member) -> None:
-        """ Get info about a user """
+        """Get info about a user"""
         creation_time = int(member.created_at.timestamp())
         join_time = int(member.joined_at.timestamp())
         roles = " ".join([role.mention for role in member.roles])
@@ -126,7 +125,7 @@ class General(commands.Cog):
         description="Get info about the server",
     )
     async def serverinfo(self, ctx: Context) -> None:
-        """ Get info about the server """
+        """Get info about the server"""
         roles = [role.name for role in ctx.guild.roles]
         created = int(ctx.guild.created_at.timestamp())
         num_roles = len(roles)
@@ -163,5 +162,4 @@ class General(commands.Cog):
 
 
 async def setup(bot):
-    """ Add the cog to the bot """
     await bot.add_cog(General(bot))

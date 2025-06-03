@@ -1,7 +1,7 @@
-""" Import modules """
 import aiohttp
 import io
 import random
+
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -12,7 +12,6 @@ from settings import EMBED_COLOR
 # TODO: Implement popcat.xyz API's new error checking system
 
 class Fun(commands.Cog):
-    """ Create cog for commands """
     def __init__(self, bot):
         self.bot = bot
 
@@ -23,7 +22,7 @@ class Fun(commands.Cog):
     )
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def petpet(self, ctx: Context, member: discord.Member) -> None:
-        """ Generate a petpet gif """
+        """Generate a petpet gif"""
         async with aiohttp.ClientSession() as session:
             async with session.get(
                 f"https://api.popcat.xyz/v2/pet?image={member.display_avatar}"
@@ -40,7 +39,7 @@ class Fun(commands.Cog):
         description="Get a random fact"
     )
     async def randomfact(self, ctx: Context) -> None:
-        """ Tell a random fact """
+        """Get a random fact"""
         async with aiohttp.ClientSession() as session:
             async with session.get(
                 "https://uselessfacts.jsph.pl/random.json?language=en"
@@ -58,7 +57,7 @@ class Fun(commands.Cog):
         description="Send a random meme from reddit"
     )
     async def meme(self, ctx: Context) -> None:
-        """ Send a random meme """
+        """Send a random meme from reddit"""
         await ctx.defer()
         async with aiohttp.ClientSession() as session:
             async with session.get(
@@ -84,7 +83,7 @@ class Fun(commands.Cog):
     )
     @app_commands.describe(question="The question you want to ask")
     async def eight_ball(self, ctx: Context, *, question: str) -> None:
-        """ Ask any question to the bot """
+        """Ask any question to the bot"""
         answers = [
             "It is certain.",
             "It is decidedly so.",
@@ -122,7 +121,7 @@ class Fun(commands.Cog):
         description="Get a random element from the periodic table"
     )
     async def randomelement(self, ctx: Context) -> None:
-        """ Get a random element from the periodic table"""
+        """Get a random element from the periodic table"""
         await ctx.defer()
         async with aiohttp.ClientSession() as session:
             async with session.get(
@@ -150,7 +149,7 @@ class Fun(commands.Cog):
         description="Get a random color"
     )
     async def randomcolor(self, ctx: Context):
-        """ Get a random color """
+        """Get a random color"""
         await ctx.defer()
         async with aiohttp.ClientSession() as session:
             async with session.get(
@@ -175,7 +174,7 @@ class Fun(commands.Cog):
         description="Get some cute fox pictures"
     )
     async def fox(self, ctx: Context) -> None:
-        """ Get some cute fox pictures """
+        """Get some cute fox pictures"""
         await ctx.defer()
         async with aiohttp.ClientSession() as session:
             async with session.get(
@@ -190,5 +189,4 @@ class Fun(commands.Cog):
 
 
 async def setup(bot):
-    """ Add the cog to the bot """
     await bot.add_cog(Fun(bot))

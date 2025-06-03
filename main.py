@@ -7,7 +7,6 @@ from discord.ext import commands
 # Import variables
 from settings import PREFIX, TOKEN
 
-# TODO: Remove unnecessary docstrings
 # TODO: Add descriptions to slash command options
 
 # Set intents
@@ -17,7 +16,6 @@ intents.message_content = True  # Enable message content intent for prefixed com
 
 # Setup both of the loggers
 class LoggingFormatter(logging.Formatter):
-    """ Configure appearance of logs """
     # Colors
     black = "\x1b[30m"
     red = "\x1b[31m"
@@ -68,7 +66,6 @@ logger.addHandler(file_handler)
 
 
 class DiscordBot(commands.Bot):
-    """ Create discord bot """
     def __init__(self) -> None:
         super().__init__(command_prefix=commands.when_mentioned_or(PREFIX), intents=intents)
         self.logger = logger
@@ -111,12 +108,10 @@ class DiscordBot(commands.Bot):
 
     # Log guild join
     async def on_guild_join(self, guild: discord.Guild) -> None:
-        """Log when the bot joins a guild"""
         self.logger.info(f"Joined guild '{guild.name}' (ID: {guild.id}) with {len(guild.members)} member(s), the guild owner is {guild.owner} (ID: {guild.owner.id})")
 
     # Log guild leave
     async def on_guild_remove(self, guild: discord.Guild) -> None:
-        """Log when the bot leaves a guild"""
         self.logger.info(f"Left guild '{guild.name}' (ID: {guild.id}) with {len(guild.members)} member(s), the guild owner is {guild.owner} (ID: {guild.owner.id})")
 
 
