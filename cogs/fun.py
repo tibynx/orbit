@@ -116,7 +116,7 @@ class Fun(commands.Cog):
         """Get a random element from the periodic table"""
         await ctx.defer()
         async with aiohttp.ClientSession() as session:
-            data = await fetch_json(session, "https://api.popcat.xyz/v2/randomelement")
+            data = await fetch_json(session, "https://api.popcat.xyz/v2/periodic-table/random")
             if data:
                 embed = discord.Embed(
                     title=data['message']['name'], description=data['message']['summary'], color=EMBED_COLOR
