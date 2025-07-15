@@ -143,12 +143,12 @@ class Fun(commands.Cog):
         async with aiohttp.ClientSession() as session:
             data = await fetch_json(session, "https://api.popcat.xyz/v2/randomcolor")
             if data:
-                hex = data['message']['hex']
-                def rgb(hex): # convert to rgb
-                    return tuple(int(hex[i:i+2], 16) for i in (0, 2, 4))
+                hex_code = data['message']['hex']
+                def rgb(hex_str): # convert to rgb
+                    return tuple(int(hex_str[i:i+2], 16) for i in (0, 2, 4))
                 embed = discord.Embed(title=data['message']['name'], color=EMBED_COLOR)
-                embed.add_field(name="HEX", value=f"#{hex}")
-                embed.add_field(name="RGB", value=f"rgb{rgb(hex)}")
+                embed.add_field(name="HEX", value=f"#{hex_code}")
+                embed.add_field(name="RGB", value=f"rgb{rgb(hex_code)}")
                 embed.set_thumbnail(url=data['message']['image'])
                 await ctx.send(embed=embed)
             else:
