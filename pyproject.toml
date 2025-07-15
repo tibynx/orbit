@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "Orbit"
-version = "1.1.0"
+version = "1.2.0"
 description = "🌑 A simple discord bot made with discord.py"
-authors = ["Tibor Mercs <tibormercs8@gmail.com>"]
+authors = ["Tibor (https://github.com/tibor309)"]
 
 [tool.poetry.dependencies]
 python = ">=3.10.0,<3.12"
