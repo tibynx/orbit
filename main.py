@@ -143,15 +143,6 @@ class DiscordBot(commands.Bot):
             embed.description=f"You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}."
             return await ctx.send(embed=embed)
 
-        # bot owner only command
-        elif isinstance(error, commands.NotOwner):
-            if ctx.guild:
-                self.logger.warning(f"User {ctx.author} (ID: {ctx.author.id}) tried to execute '{command_name}' command in the guild '{ctx.guild.name}' (ID: {ctx.guild.id})")
-                return None
-            else:
-                self.logger.warning(f"User {ctx.author} (ID: {ctx.author.id}) tried to execute '{command_name}' command")
-                return None
-
         # user doesn't have enough permissions
         elif isinstance(error, commands.MissingPermissions):
             embed.description="You are missing permission(s) to execute this command:\n`" + ", ".join(error.missing_permissions) + "`"
@@ -173,27 +164,18 @@ class DiscordBot(commands.Bot):
             embed.description="The specified member cannot be found!"
             return await ctx.send(embed=embed)
 
-        # invalid server
-        elif isinstance(error, commands.GuildNotFound):
-            embed.description="The specified guild cannot be found!"
+        # executed in private messages
+        elif isinstance(error, commands.NoPrivateMessage):
+            embed.description="This command cannot be used in private messages!"
             return await ctx.send(embed=embed)
 
-        # invalid role
-        elif isinstance(error, commands.RoleNotFound):
-            embed.description="The specified role cannot be found!"
+        # no required role
+        elif isinstance(error, commands.MissingRole):
+            embed.description="You are missing the required role to execute this command!"
             return await ctx.send(embed=embed)
 
-        # invalid channel
-        elif isinstance(error, commands.ChannelNotFound):
-            embed.description="The specified channel cannot be found!"
-            return await ctx.send(embed=embed)
-
-        elif isinstance(error, commands.MessageNotFound):
-            embed.description="The specified message cannot be found!"
-            return await ctx.send(embed=embed)
-
-        # bot lacks permissions (discord.errors.Forbidden)
-        elif isinstance(error, discord.errors.Forbidden):
+        # bot lacks permissions
+        elif isinstance(error, discord.Forbidden):
             embed.description="I do not have the required permissions to execute this command!",
             return await ctx.send(embed=embed)
 
