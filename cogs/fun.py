@@ -50,9 +50,9 @@ class Fun(commands.Cog):
             Command context
         """
         async with aiohttp.ClientSession() as session:
-            data = await fetch_json(session, "https://api.popcat.xyz/v2/randomfact")
+            data = await fetch_json(session, "https://api.popcat.xyz/v2/fact")
             if data:
-                text = data["text"]
+                text = data["message"]["fact"]
                 await ctx.send(text.replace("`", "'"))
             else:
                 await ctx.send("There was an error with the API, try again later.")
