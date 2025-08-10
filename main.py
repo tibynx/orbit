@@ -7,14 +7,12 @@ from discord.ext import commands
 # Import variables
 from settings import PREFIX, TOKEN
 
-# TODO: Add descriptions to slash command options
-
 # Set intents
 intents = discord.Intents.default()
 intents.members = True # Enable for user counting
 intents.message_content = True  # Enable message content intent for prefixed commands
 
-# Setup both of the loggers
+# Set up both of the loggers
 class LoggingFormatter(logging.Formatter):
     # Colors
     black = "\x1b[30m"

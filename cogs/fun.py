@@ -17,13 +17,20 @@ class Fun(commands.Cog):
         self.bot = bot
 
 
-    @commands.hybrid_command(
-        name="petpet",
-        description="Generate a petpet gif"
-    )
+    @commands.hybrid_command(name="petpet")
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def petpet(self, ctx: Context, member: discord.Member) -> None:
-        """Generate a petpet gif"""
+        """
+        Generate a petting GIF of a member
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+
+        member: discord.Member
+            The member you want to pet
+        """
         async with aiohttp.ClientSession() as session:
             image = await fetch_img(session, f"https://api.popcat.xyz/v2/pet?image={member.display_avatar}")
             if image:
@@ -32,12 +39,16 @@ class Fun(commands.Cog):
                 await ctx.send("There was an error with the API, try again later.")
 
 
-    @commands.hybrid_command(
-        name="randomfact",
-        description="Get a random fact"
-    )
-    async def randomfact(self, ctx: Context) -> None:
-        """Get a random fact"""
+    @commands.hybrid_command(name="randomfact")
+    async def random_fact(self, ctx: Context) -> None:
+        """
+        Get a random fact
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+        """
         async with aiohttp.ClientSession() as session:
             data = await fetch_json(session, "https://api.popcat.xyz/v2/randomfact")
             if data:
@@ -47,12 +58,16 @@ class Fun(commands.Cog):
                 await ctx.send("There was an error with the API, try again later.")
 
 
-    @commands.hybrid_command(
-        name="meme",
-        description="Send a random meme from reddit"
-    )
+    @commands.hybrid_command(name="meme")
     async def meme(self, ctx: Context) -> None:
-        """Send a random meme from reddit"""
+        """
+        Send a random meme from reddit
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+        """
         await ctx.defer()
         async with aiohttp.ClientSession() as session:
             data = await fetch_json(session, "https://meme-api.com/gimme")
@@ -69,13 +84,19 @@ class Fun(commands.Cog):
                 await ctx.send("There was an error with the API, try again later.")
 
 
-    @commands.hybrid_command(
-        name="8ball",
-        description="Ask any question to the bot",
-    )
-    @app_commands.describe(question="The question you want to ask")
+    @commands.hybrid_command(name="8ball")
     async def eight_ball(self, ctx: Context, *, question: str) -> None:
-        """Ask any question to the bot"""
+        """
+        Ask any question to the bot
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+
+        question: str
+            The question you want to ask the bot
+        """
         answers = [
             "It is certain.",
             "It is decidedly so.",
@@ -108,12 +129,16 @@ class Fun(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    @commands.hybrid_command(
-        name="randomelement",
-        description="Get a random element from the periodic table"
-    )
-    async def randomelement(self, ctx: Context) -> None:
-        """Get a random element from the periodic table"""
+    @commands.hybrid_command(name="randomelement")
+    async def random_element(self, ctx: Context) -> None:
+        """
+        Get a random element from the periodic table
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+        """
         await ctx.defer()
         async with aiohttp.ClientSession() as session:
             data = await fetch_json(session, "https://api.popcat.xyz/v2/periodic-table/random")
@@ -133,12 +158,16 @@ class Fun(commands.Cog):
                 await ctx.send("There was an error with the API, please try again later.")
 
 
-    @commands.hybrid_command(
-        name="randomcolor",
-        description="Get a random color"
-    )
-    async def randomcolor(self, ctx: Context):
-        """Get a random color"""
+    @commands.hybrid_command(name="randomcolor")
+    async def random_color(self, ctx: Context):
+        """
+        Get a random color
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+        """
         await ctx.defer()
         async with aiohttp.ClientSession() as session:
             data = await fetch_json(session, "https://api.popcat.xyz/v2/randomcolor")
@@ -155,12 +184,16 @@ class Fun(commands.Cog):
                 await ctx.send("There was an error with the API, please try again later.")
 
 
-    @commands.hybrid_command(
-        name="fox",
-        description="Get some cute fox pictures"
-    )
+    @commands.hybrid_command(name="fox")
     async def fox(self, ctx: Context) -> None:
-        """Get some cute fox pictures"""
+        """
+        Send some cute fox pictures
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+        """
         await ctx.defer()
         async with aiohttp.ClientSession() as session:
             image = await fetch_img(session, "https://api.tinyfox.dev/img?animal=fox")
