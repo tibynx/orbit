@@ -10,12 +10,16 @@ class General(commands.Cog):
         self.bot = bot
 
 
-    @commands.hybrid_command(
-        name="ping",
-        description="Check bot latency",
-    )
+    @commands.hybrid_command(name="ping")
     async def ping(self, ctx: Context) -> None:
-        """Check bot latency"""
+        """
+        Check bot latency
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+        """
         latency = round(self.bot.latency * 1000)
         embed = discord.Embed(
             title="🏓 Pong!",
@@ -26,14 +30,21 @@ class General(commands.Cog):
 
 
 
-    @commands.hybrid_command(
-        name="avatar", 
-        description="Show user avatar"
-        )
+    @commands.hybrid_command(name="avatar")
     async def avatar_primary(self, ctx: Context, member: discord.Member) -> None:
-        """Show user avatar"""
+        """
+        Shows the selected member's avatar
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+
+        member: discord.Member
+            The member you want to see the avatar of
+        """
         embed = discord.Embed(
-            title=f"{member.display_name}'s primary avatar",
+            title=f"{member.display_name}'s avatar",
             color=EMBED_COLOR
         )
         embed.set_image(url=member.avatar)
@@ -41,12 +52,19 @@ class General(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    @commands.hybrid_command(
-        name="banner",
-        description="Show user banner"
-    )
-    async def banner_user(self, ctx: Context, member: discord.Member) -> None:
-        """Show user banner"""
+    @commands.hybrid_command(name="banner")
+    async def banner_primary(self, ctx: Context, member: discord.Member) -> None:
+        """
+        Shows the selected member's banner
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+
+        member: discord.Member
+            The member you want to see the banner of
+        """
         if member.banner == None:
             embed = discord.Embed(
                 title=f"{member.display_name} doesn't have a banner",
@@ -62,12 +80,16 @@ class General(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    @commands.hybrid_command(
-        name="botinfo",
-        description="Get some info about the bot"
-    )
-    async def botinfo(self, ctx: Context) -> None:
-        """Get some info about the bot"""
+    @commands.hybrid_command(name="botinfo")
+    async def info_bot(self, ctx: Context) -> None:
+        """
+        Get info about the bot
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+        """
         embed = discord.Embed(title="Bot Info", color=EMBED_COLOR)
         embed.add_field(
             name="Username",
@@ -75,7 +97,7 @@ class General(commands.Cog):
             inline=True
         )
         embed.add_field(
-            name="Discord.py version", value=f"{discord.__version__}",
+            name="Discord.py Version", value=f"{discord.__version__}",
             inline=True
         )
         embed.add_field(
@@ -85,7 +107,7 @@ class General(commands.Cog):
         embed.add_field(name="Servers", value=len(self.bot.guilds), inline=True)
         embed.add_field(
             name="Prefix",
-            value=f"/ (Slash Commands) or {PREFIX}",
+            value=f"{PREFIX}",
             inline=False,
         )
         embed.set_author(
@@ -95,17 +117,24 @@ class General(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    @commands.hybrid_command(
-        name="whois",
-        description="Get info about a user"
-    )
-    async def whois(self, ctx: Context, member: discord.Member) -> None:
-        """Get info about a user"""
+    @commands.hybrid_command(name="whois")
+    async def info_member(self, ctx: Context, member: discord.Member) -> None:
+        """
+        Get info about a member
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+
+        member: discord.Member
+            The member you want to see the info of
+        """
         creation_time = int(member.created_at.timestamp())
         join_time = int(member.joined_at.timestamp())
         roles = " ".join([role.mention for role in member.roles])
         embed = discord.Embed(
-            title="User info",
+            title="Member info",
             description=f"{member.mention}",
             color=EMBED_COLOR
         )
@@ -120,12 +149,17 @@ class General(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    @commands.hybrid_command(
-        name="serverinfo",
-        description="Get info about the server",
-    )
-    async def serverinfo(self, ctx: Context) -> None:
-        """Get info about the server"""
+    @commands.hybrid_command(name="serverinfo")
+    @commands.guild_only()
+    async def info_server(self, ctx: Context) -> None:
+        """
+        Get info about this server
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+        """
         roles = [role.name for role in ctx.guild.roles]
         created = int(ctx.guild.created_at.timestamp())
         num_roles = len(roles)
