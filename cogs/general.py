@@ -65,19 +65,63 @@ class General(commands.Cog):
         member: discord.Member
             The member you want to see the banner of
         """
-        if member.banner == None:
-            embed = discord.Embed(
-                title=f"{member.display_name} doesn't have a banner",
-                color=EMBED_COLOR
-            )
-            embed.set_author(name=member.name, icon_url=member.avatar)
+        if member.banner is None:
+            await ctx.send(f"{member.mention} doesn't have a banner.", allowed_mentions=discord.AllowedMentions.none())
         else:
             embed = discord.Embed(
                 title=f"{member.display_name}'s banner",
                 color=EMBED_COLOR
             )
             embed.set_image(url=member.banner)
-        await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
+
+
+    @commands.hybrid_command(name="serveravatar")
+    async def avatar_server(self, ctx: Context, member: discord.Member) -> None:
+        """
+        Shows the selected member's server avatar
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+
+        member: discord.Member
+            The member you want to see the server avatar of
+        """
+        if member.guild_avatar is None:
+            await ctx.send(f"{member.mention} doesn't have a server avatar.", allowed_mentions=discord.AllowedMentions.none())
+        else:
+            embed = discord.Embed(
+                title=f"{member.display_name}'s server avatar",
+                color=EMBED_COLOR
+            )
+            embed.set_image(url=member.guild_avatar)
+            await ctx.send(embed=embed)
+
+
+    @commands.hybrid_command(name="serverbanner")
+    async def banner_server(self, ctx: Context, member: discord.Member) -> None:
+        """
+        Shows the selected member's server banner
+
+        Parameters
+        ------------
+        ctx: Context
+            Command context
+
+        member: discord.Member
+            The member you want to see the server banner of
+        """
+        if member.guild_banner is None:
+            await ctx.send(f"{member.mention} doesn't have a server banner.", allowed_mentions=discord.AllowedMentions.none())
+        else:
+            embed = discord.Embed(
+                title=f"{member.display_name}'s server banner",
+                color=EMBED_COLOR
+            )
+            embed.set_image(url=member.guild_banner)
+            await ctx.send(embed=embed)
 
 
     @commands.hybrid_command(name="botinfo")
