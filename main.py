@@ -179,6 +179,9 @@ class DiscordBot(commands.Bot):
             embed.description="I do not have the required permissions to execute this command!",
             return await ctx.send(embed=embed)
 
+        elif isinstance(error, commands.CommandNotFound):
+            return None
+
         # handle other errors
         else:
             embed.description="An unhandled exception occurred while executing the command:\n" + f"`{str(error)}`"
