@@ -50,30 +50,34 @@ class DiscordBot(commands.Bot):
 
     # Load cogs
     async def load_cogs(self) -> None:
-        for file in os.listdir(f"{os.path.realpath(os.path.dirname(__file__))}/cogs"):
-            if file.endswith(".py"):
+        for file in os.listdir(os.path.join(os.path.realpath(os.path.dirname(__file__)), "cogs")):
+            if file.endswith(".py"): # Only load python files
                 extension = file[:-3]
                 try:
                     await self.load_extension(f"cogs.{extension}")
-                    self.logger.info(f"Loaded extension '{extension}'")
-                except Exception as e:
-                    exception = f"{type(e).__name__}: {e}"
-                    self.logger.error(f"Failed to load extension '{extension}'\n{exception}")
+                    self.logger.info("Loaded extension '%s'", extension)
+                except Exception as error:
+                    self.logger.error(
+                        "Failed to load extension '%s': %s", extension, type(error).__name__
+                    )
+                    self.logger.exception(error)
 
 
     async def setup_hook(self) -> None:
-        self.logger.info(f"Logged in as {self.user.name}#{self.user.discriminator} (ID: {self.user.id})")
-        self.logger.info(f"discord.py version: {discord.__version__}")
+        self.logger.info(
+            "Logged in as %s#%s (ID: %s)", self.user.name, self.user.discriminator, self.user.id
+        )
+        self.logger.info("discord.py version: %s", discord.__version__)
         self.logger.info("-------------------")
         await self.load_cogs()
 
         # Sync interactions
         try:
-            synced = await bot.tree.sync()
-            self.logger.info(f"Synced {len(synced)} command(s)")
-        except Exception as e:
-            exception = f"{type(e).__name__}: {e}"
-            self.logger.error(f"Failed to sync commands\n{exception}")
+            synced = await self.tree.sync() # Sync all commands globally
+            self.logger.info("Synced %d interactions globally", len(synced))
+        except Exception as error:
+            self.logger.error("Failed to sync interaction: %s", type(error).__name__)
+            self.logger.exception(error)
 
 
     # Make sure the bot doesn't respond to itself
@@ -85,23 +89,35 @@ class DiscordBot(commands.Bot):
 
     # Log guild join
     async def on_guild_join(self, guild: discord.Guild) -> None:
-        self.logger.info(f"Joined guild '{guild.name}' (ID: {guild.id}) with {len(guild.members)} member(s), the guild owner is {guild.owner} (ID: {guild.owner.id})")
+        self.logger.info(
+            "Joined guild '%s' (ID: %s) with %d member(s), the guild owner is %s (ID: %s)",
+            guild.name, guild.id, len(guild.members), guild.owner, guild.owner.id
+        )
 
     # Log guild leave
     async def on_guild_remove(self, guild: discord.Guild) -> None:
-        self.logger.info(f"Left guild '{guild.name}' (ID: {guild.id}) with {len(guild.members)} member(s), the guild owner is {guild.owner} (ID: {guild.owner.id})")
-
+        self.logger.info(
+            "Left guild '%s' (ID: %s) with %d member(s), the guild owner is %s (ID: %s)",
+            guild.name, guild.id, len(guild.members), guild.owner, guild.owner.id
+        )
 
     # Log command execution
     async def on_command_completion(self, ctx) -> None:
-        full_command_name = ctx.command.qualified_name
-        split = full_command_name.split(" ")
-        executed_command = str(split[0])
         if ctx.guild is not None:
-            self.logger.info(f"User {ctx.author} (ID: {ctx.author.id}) executed '{executed_command}' command in the guild '{ctx.guild.name}' (ID: {ctx.guild.id})")
+            self.logger.info(
+                "User %s (ID: %s) executed the '%s' interaction in guild '%s' (ID: %s)",
+                ctx.author, ctx.author.id, ctx.qualified_name,
+                ctx.guild.name, ctx.guild.id
+            )
         else:
-            self.logger.info(f"User {ctx.author} (ID: {ctx.author.id}) executed '{executed_command}' command")
+            self.logger.info(
+                "User %s (ID: %s) executed the '%s' interaction in DMs",
+                ctx.author.name, ctx.author.id, ctx.qualified_name
+            )
 
+    # Log command errors
+    async def on_error(self, event_name: str, *args, **kwargs) -> None:
+        self.logger.exception("An error occurred in %s", event_name)
 
     # Log command errors
     async def on_command_error(self, ctx, error) -> None:
@@ -114,7 +130,7 @@ class DiscordBot(commands.Bot):
             color=0xE02B2B
         )
 
-        # command is on cooldown
+        # Command is on cooldown
         if isinstance(error, commands.CommandOnCooldown):
             minutes, seconds = divmod(error.retry_after, 60)
             hours, minutes = divmod(minutes, 60)
@@ -122,49 +138,75 @@ class DiscordBot(commands.Bot):
             embed.description=f"You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}."
             return await ctx.send(embed=embed)
 
-        # user doesn't have enough permissions
-        elif isinstance(error, commands.MissingPermissions):
-            embed.description="You are missing permission(s) to execute this command:\n`" + ", ".join(error.missing_permissions) + "`"
+        # User doesn't have permission to execute the command
+        elif isinstance(error, (commands.MissingPermissions, commands.CheckFailure)):
+            embed.description="You don't have permission to execute this command."
             return await ctx.send(embed=embed)
 
-        # bot doesn't have enough permissions
-        elif isinstance(error, commands.BotMissingPermissions):
-            embed.description="I am missing the permission(s) to execute this command:\n`" + ", ".join(error.missing_permissions) + "`"
+        # Bot doesn't have permission to execute the command
+        elif isinstance(error, (commands.BotMissingPermissions, discord.Forbidden)):
+            embed.description="I don't have permission to execute this command."
             return await ctx.send(embed=embed)
 
-        # missing command arguments
+        # Missing command arguments
         elif isinstance(error, commands.MissingRequiredArgument):
-            # We need to capitalize because the command arguments have no capital letter in the code, and they're the first word in the error message.
-            embed.description="You're missing a required argument for this command:\n" + f"`{str(error).capitalize()}`"
+            embed.description=f"You're missing a required argument for this command: `{str(error).capitalize()}`"
             return await ctx.send(embed=embed)
 
-        # invalid user
+        # Invalid user
         elif isinstance(error, commands.MemberNotFound):
-            embed.description="The specified member cannot be found!"
+            embed.description="The specified user cannot be found!"
             return await ctx.send(embed=embed)
 
-        # executed in private messages
+        # Command is executed in DMs but it shouldn't be
         elif isinstance(error, commands.NoPrivateMessage):
             embed.description="This command cannot be used in private messages!"
             return await ctx.send(embed=embed)
 
-        # no required role
+        # User is missing a required role
         elif isinstance(error, commands.MissingRole):
             embed.description="You are missing the required role to execute this command!"
             return await ctx.send(embed=embed)
 
-        # bot lacks permissions
-        elif isinstance(error, discord.Forbidden):
-            embed.description="I do not have the required permissions to execute this command!",
-            return await ctx.send(embed=embed)
-
+        # Ignore command not found errors
         elif isinstance(error, commands.CommandNotFound):
             return None
 
-        # handle other errors
+        # Network issues or rate limiting
+        elif isinstance(error, discord.HTTPException):
+            self.logger.warning(
+                "HTTP exception occurred in interaction '%s' for user %s (ID: %s) in "
+                "guild '%s' (ID: %s): %s",
+                command_name, ctx.author.name, ctx.author.id,
+                ctx.guild.name, ctx.guild.id, error
+            )
+            embed.description=f"I cannot complete this command because of network issues. I might have been rate limited. Please try again later."
+            return await ctx.send(embed=embed)
+
+        # Command raised an unexpected error
+        elif isinstance(error, commands.CommandInvokeError):
+            original = getattr(error, "original", error)
+            self.logger.error(
+                "CommandInvokeError occurred in interaction '%s' by user %s (ID: %s) in "
+                "guild '%s' (ID: %s): %r",
+                command_name, ctx.author.name, ctx.author.id,
+                ctx.guild.name, ctx.guild.id, original,
+                exc_info=(type(original), original, original.__traceback__),
+            )
+            embed.description="An error occurred while executing the command."
+            return await ctx.send(embed=embed)
+
+
+        # Other errors
         else:
-            embed.description="An unhandled exception occurred while executing the command:\n" + f"`{str(error)}`"
-            self.logger.error(f"Unhandled exception in command '{command_name}': {str(error)}")
+            self.logger.error(
+                "Unhandled app command error in interaction '%s' by user %s (ID: %s) in "
+                "guild '%s' (ID: %s): %r",
+                command_name, ctx.author.name, ctx.author.id,
+                ctx.guild.name, ctx.guild.id, error,
+                exc_info=(type(error), error, error.__traceback__),
+            )
+            embed.description="An unexpected error occurred while executing the command."
             return await ctx.send(embed=embed)
 
 
