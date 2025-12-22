@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Context
 
-from settings import PREFIX, EMBED_COLOR
+from config import BOT_PREFIX, EMBED_COLOR
 
 
 class General(commands.Cog):

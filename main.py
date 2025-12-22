@@ -5,7 +5,7 @@ import discord
 from discord.ext import commands
 
 # Import variables
-from settings import PREFIX, TOKEN
+from config import BOT_PREFIX, BOT_TOKEN
 
 
 # TODO: Do pylint, and fix code
@@ -16,7 +16,6 @@ from settings import PREFIX, TOKEN
 # TODO: Fully move to app commands
 # TODO: Add more commands and cogs
 # TODO: Use buttons, components where applicable
-# TODO: Update secrets loading
 # TODO: Update logging
 # TODO: Update ignore files
 
@@ -44,7 +43,7 @@ logger.addHandler(log_handler)
 
 class DiscordBot(commands.Bot):
     def __init__(self) -> None:
-        super().__init__(command_prefix=commands.when_mentioned_or(PREFIX), intents=intents)
+        super().__init__(command_prefix=commands.when_mentioned_or(BOT_PREFIX), intents=intents)
         self.logger = logger
 
 
@@ -207,4 +206,7 @@ class DiscordBot(commands.Bot):
 
 # Run the bot
 bot = DiscordBot()
-bot.run(TOKEN)
+
+if not BOT_TOKEN:
+    raise ValueError("BOT_TOKEN not found in environment variables")
+bot.run(BOT_TOKEN)
