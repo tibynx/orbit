@@ -12,55 +12,20 @@ intents = discord.Intents.default()
 intents.members = True # Enable for user counting
 intents.message_content = True  # Enable message content intent for prefixed commands
 
-# Set up both of the loggers
-class LoggingFormatter(logging.Formatter):
-    # Colors
-    black = "\x1b[30m"
-    red = "\x1b[31m"
-    green = "\x1b[32m"
-    yellow = "\x1b[33m"
-    blue = "\x1b[34m"
-    gray = "\x1b[38m"
+# Set up logging
+logs_dir = os.path.join(os.path.dirname(__file__), "logs")
+os.makedirs(logs_dir, exist_ok=True)
+timestamp = discord.utils.utcnow().strftime("%Y-%m-%d_%H-%M-%S") # UTC timestamp
+log_filename = os.path.join(logs_dir, f"log_{timestamp}.log")
 
-    # Styles
-    reset = "\x1b[0m"
-    bold = "\x1b[1m"
-
-    COLORS = {
-        logging.DEBUG: gray + bold,
-        logging.INFO: blue + bold,
-        logging.WARNING: yellow + bold,
-        logging.ERROR: red,
-        logging.CRITICAL: red + bold,
-    }
-
-    def format(self, record):
-        log_color = self.COLORS[record.levelno]
-        log_format = "(black)[{asctime}](reset) (levelcolor)[{levelname:<8}](reset) (green){name}:(reset) {message}"
-        log_format = log_format.replace("(black)", self.black + self.bold)
-        log_format = log_format.replace("(reset)", self.reset)
-        log_format = log_format.replace("(levelcolor)", log_color)
-        log_format = log_format.replace("(green)", self.green + self.bold)
-        formatter = logging.Formatter(log_format, "%Y-%m-%d %H:%M:%S", style="{")
-        return formatter.format(record)
-
-
-logger = logging.getLogger("discord_bot")
+logger = logging.getLogger("discord.app")
 logger.setLevel(logging.INFO)
-
-# Console handler
-console_handler = logging.StreamHandler()
-console_handler.setFormatter(LoggingFormatter())
-
-# File handler
-file_handler = logging.FileHandler(filename="discord.log", encoding="utf-8", mode="w")
-file_handler_log_format = "[{asctime}] [{levelname:<8}] {name}: {message}"
-file_handler_formatter = logging.Formatter(file_handler_log_format, "%Y-%m-%d %H:%M:%S", style="{")
-file_handler.setFormatter(file_handler_formatter)
-
-# Add the handlers
-logger.addHandler(console_handler)
-logger.addHandler(file_handler)
+log_handler = logging.FileHandler(filename=log_filename, encoding="utf-8", mode="w")
+# Using Python's standard formatting style
+log_format = "[{asctime}] [{levelname:<8}] {name}: {message}"
+log_formatter = logging.Formatter(log_format, "%Y-%m-%d %H:%M:%S", style="{")
+log_handler.setFormatter(log_formatter)
+logger.addHandler(log_handler)
 
 
 class DiscordBot(commands.Bot):
