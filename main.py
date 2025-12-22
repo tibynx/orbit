@@ -11,7 +11,6 @@ from config import BOT_PREFIX, BOT_TOKEN
 # TODO: Do pylint, and fix code
 # TODO: Add more comments and docstrings
 # TODO: Update README.md, Dockerfile, and poetry config
-# TODO: Remove general commands like avatar, whois, etc.
 # TODO: Add better error handling
 # TODO: Fully move to app commands
 # TODO: Add more commands and cogs
