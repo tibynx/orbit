@@ -1,28 +1,24 @@
 import logging
 import os
-
 import discord
+from discord import app_commands
 from discord.ext import commands
-
-# Import variables
-from config import BOT_PREFIX, BOT_TOKEN
+from config import BOT_TOKEN
 
 
 # TODO: Do pylint, and fix code
 # TODO: Add more comments and docstrings
 # TODO: Update README.md, Dockerfile, and poetry config
 # TODO: Add better error handling
-# TODO: Fully move to app commands
 # TODO: Add more commands and cogs
 # TODO: Use buttons, components where applicable
-# TODO: Update logging
 # TODO: Update ignore files
+# TODO: Replace some embeds with components
 
 
 # Set intents
 intents = discord.Intents.default()
-intents.members = True # Enable for user counting
-intents.message_content = True  # Enable message content intent for prefixed commands
+intents.message_content = True
 
 # Set up logging
 logs_dir = os.path.join(os.path.dirname(__file__), "logs")
@@ -42,7 +38,8 @@ logger.addHandler(log_handler)
 
 class DiscordBot(commands.Bot):
     def __init__(self) -> None:
-        super().__init__(command_prefix=commands.when_mentioned_or(BOT_PREFIX), intents=intents)
+        # No prefix since we use app commands
+        super().__init__(command_prefix="", intents=intents)
         self.logger = logger
 
 
@@ -99,70 +96,73 @@ class DiscordBot(commands.Bot):
             guild.name, guild.id, len(guild.members), guild.owner, guild.owner.id
         )
 
-    # Log command execution
-    async def on_command_completion(self, ctx) -> None:
-        if ctx.guild is not None:
+    # Log app command execution
+    async def on_app_command_completion(
+            self, interaction: discord.Interaction, command: app_commands.Command
+    ) -> None:
+        if interaction.guild is not None:
             self.logger.info(
                 "User %s (ID: %s) executed the '%s' interaction in guild '%s' (ID: %s)",
-                ctx.author, ctx.author.id, ctx.command.qualified_name,
-                ctx.guild.name, ctx.guild.id
+                interaction.user, interaction.user.id, command.qualified_name,
+                interaction.guild.name, interaction.guild.id
             )
         else:
             self.logger.info(
                 "User %s (ID: %s) executed the '%s' interaction in DMs",
-                ctx.author.name, ctx.author.id, ctx.command.qualified_name
+                interaction.user, interaction.user.id, command.qualified_name
             )
 
     # Log command errors
     async def on_error(self, event_name: str, *args, **kwargs) -> None:
         self.logger.exception("An error occurred in %s", event_name)
 
-    # Log command errors
-    async def on_command_error(self, ctx, error) -> None:
+    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
+        if isinstance(error, commands.CommandNotFound):
+            return  # Ignore command not found errors
+        self.logger.error("An unhandled command error occurred: %s", error)
+
+    async def on_app_command_error(
+            self, interaction: discord.Interaction, error: app_commands.AppCommandError
+    ) -> None:
         # Get the command name
-        command_name = ctx.command.name if ctx.command else "Unknown command"
+        command_name = interaction.command.name if interaction.command else "Unknown command"
+
+        # Check if interaction was already responded to
+        if interaction.response.is_done():
+            send_msg = interaction.followup.send
+        else:
+            send_msg = interaction.response.send_message
 
         # Command is on cooldown
-        if isinstance(error, commands.CommandOnCooldown):
+        if isinstance(error, app_commands.CommandOnCooldown):
             minutes, seconds = divmod(error.retry_after, 60)
             hours, minutes = divmod(minutes, 60)
             hours = hours % 24
-            await ctx.send(f"You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.")
+            await send_msg(
+                f"You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}."
+            )
             return None
 
         # User doesn't have permission to execute the command
-        elif isinstance(error, (commands.MissingPermissions, commands.CheckFailure)):
-            await ctx.send("You don't have permission to execute this command.")
+        elif isinstance(error, (app_commands.MissingPermissions, app_commands.CheckFailure)):
+            await send_msg(
+                "You don't have permission to execute this command."
+            )
             return None
-
 
         # Bot doesn't have permission to execute the command
-        elif isinstance(error, (commands.BotMissingPermissions, discord.Forbidden)):
-            await ctx.send("I don't have permission to execute this command.")
+        elif isinstance(error, (app_commands.BotMissingPermissions, discord.Forbidden)):
+            await send_msg(
+                "I don't have permission to execute this command."
+            )
             return None
 
-        # Missing command arguments
-        elif isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send("You're missing a required argument for this command.")
-            return None
-
-        # Invalid user
-        elif isinstance(error, commands.MemberNotFound):
-            await ctx.send("The specified user cannot be found.")
-            return None
-
-        # Command is executed in DMs but it shouldn't be
-        elif isinstance(error, commands.NoPrivateMessage):
-            await ctx.send("This command cannot be used in private messages.")
-            return None
-
-        # User is missing a required role
-        elif isinstance(error, commands.MissingRole):
-            await ctx.send("You are missing the required role to execute this command.")
-            return None
-
-        # Ignore command not found errors
-        elif isinstance(error, commands.CommandNotFound):
+        # Command doesn't exist
+        # Happens when a command is updated, but the client hasn't refreshed
+        elif isinstance(error, app_commands.CommandNotFound):
+            await send_msg(
+                "Command not found. Please refresh your client."
+            )
             return None
 
         # Network issues or rate limiting
@@ -170,23 +170,25 @@ class DiscordBot(commands.Bot):
             self.logger.warning(
                 "HTTP exception occurred in interaction '%s' for user %s (ID: %s) in "
                 "guild '%s' (ID: %s): %s",
-                command_name, ctx.author.name, ctx.author.id,
-                ctx.guild.name, ctx.guild.id, error
+                command_name, interaction.user.name, interaction.user.id,
+                interaction.guild.name, interaction.guild.id, error
             )
-            await ctx.send("I cannot complete this command because of network issues. I might have been rate limited. Please try again later.")
+            await send_msg(
+                "I cannot complete this command because of network issues. I might have been rate limited. Please try again later."
+            )
             return None
 
         # Command raised an unexpected error
-        elif isinstance(error, commands.CommandInvokeError):
+        elif isinstance(error, app_commands.CommandInvokeError):
             original = getattr(error, "original", error)
             self.logger.error(
                 "CommandInvokeError occurred in interaction '%s' by user %s (ID: %s) in "
                 "guild '%s' (ID: %s): %r",
-                command_name, ctx.author.name, ctx.author.id,
-                ctx.guild.name, ctx.guild.id, original,
+                command_name, interaction.user.name, interaction.user.id,
+                interaction.guild.name, interaction.guild.id, original,
                 exc_info=(type(original), original, original.__traceback__),
             )
-            await ctx.send("An error occurred while executing the command.")
+            await send_msg("An error occurred while executing the command.")
             return None
 
 
@@ -195,11 +197,11 @@ class DiscordBot(commands.Bot):
             self.logger.error(
                 "Unhandled app command error in interaction '%s' by user %s (ID: %s) in "
                 "guild '%s' (ID: %s): %r",
-                command_name, ctx.author.name, ctx.author.id,
-                ctx.guild.name, ctx.guild.id, error,
+                command_name, interaction.user.name, interaction.user.id,
+                interaction.guild.name, interaction.guild.id, error,
                 exc_info=(type(error), error, error.__traceback__),
             )
-            await ctx.send("An unexpected error occurred while executing the command.")
+            await send_msg("An unexpected error occurred while executing the command.")
             return None
 
 
