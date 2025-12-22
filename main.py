@@ -7,6 +7,20 @@ from discord.ext import commands
 # Import variables
 from settings import PREFIX, TOKEN
 
+
+# TODO: Do pylint, and fix code
+# TODO: Add more comments and docstrings
+# TODO: Update README.md, Dockerfile, and poetry config
+# TODO: Remove general commands like avatar, whois, etc.
+# TODO: Add better error handling
+# TODO: Fully move to app commands
+# TODO: Add more commands and cogs
+# TODO: Use buttons, components where applicable
+# TODO: Update secrets loading
+# TODO: Update logging
+# TODO: Update ignore files
+
+
 # Set intents
 intents = discord.Intents.default()
 intents.members = True # Enable for user counting
