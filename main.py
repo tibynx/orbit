@@ -106,13 +106,13 @@ class DiscordBot(commands.Bot):
         if ctx.guild is not None:
             self.logger.info(
                 "User %s (ID: %s) executed the '%s' interaction in guild '%s' (ID: %s)",
-                ctx.author, ctx.author.id, ctx.qualified_name,
+                ctx.author, ctx.author.id, ctx.command.qualified_name,
                 ctx.guild.name, ctx.guild.id
             )
         else:
             self.logger.info(
                 "User %s (ID: %s) executed the '%s' interaction in DMs",
-                ctx.author.name, ctx.author.id, ctx.qualified_name
+                ctx.author.name, ctx.author.id, ctx.command.qualified_name
             )
 
     # Log command errors
@@ -124,49 +124,44 @@ class DiscordBot(commands.Bot):
         # Get the command name
         command_name = ctx.command.name if ctx.command else "Unknown command"
 
-        # Create embed
-        embed = discord.Embed(
-            title="Error",
-            color=0xE02B2B
-        )
-
         # Command is on cooldown
         if isinstance(error, commands.CommandOnCooldown):
             minutes, seconds = divmod(error.retry_after, 60)
             hours, minutes = divmod(minutes, 60)
             hours = hours % 24
-            embed.description=f"You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}."
-            return await ctx.send(embed=embed)
+            await ctx.send(f"You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}.")
+            return None
 
         # User doesn't have permission to execute the command
         elif isinstance(error, (commands.MissingPermissions, commands.CheckFailure)):
-            embed.description="You don't have permission to execute this command."
-            return await ctx.send(embed=embed)
+            await ctx.send("You don't have permission to execute this command.")
+            return None
+
 
         # Bot doesn't have permission to execute the command
         elif isinstance(error, (commands.BotMissingPermissions, discord.Forbidden)):
-            embed.description="I don't have permission to execute this command."
-            return await ctx.send(embed=embed)
+            await ctx.send("I don't have permission to execute this command.")
+            return None
 
         # Missing command arguments
         elif isinstance(error, commands.MissingRequiredArgument):
-            embed.description=f"You're missing a required argument for this command: `{str(error).capitalize()}`"
-            return await ctx.send(embed=embed)
+            await ctx.send("You're missing a required argument for this command.")
+            return None
 
         # Invalid user
         elif isinstance(error, commands.MemberNotFound):
-            embed.description="The specified user cannot be found!"
-            return await ctx.send(embed=embed)
+            await ctx.send("The specified user cannot be found.")
+            return None
 
         # Command is executed in DMs but it shouldn't be
         elif isinstance(error, commands.NoPrivateMessage):
-            embed.description="This command cannot be used in private messages!"
-            return await ctx.send(embed=embed)
+            await ctx.send("This command cannot be used in private messages.")
+            return None
 
         # User is missing a required role
         elif isinstance(error, commands.MissingRole):
-            embed.description="You are missing the required role to execute this command!"
-            return await ctx.send(embed=embed)
+            await ctx.send("You are missing the required role to execute this command.")
+            return None
 
         # Ignore command not found errors
         elif isinstance(error, commands.CommandNotFound):
@@ -180,8 +175,8 @@ class DiscordBot(commands.Bot):
                 command_name, ctx.author.name, ctx.author.id,
                 ctx.guild.name, ctx.guild.id, error
             )
-            embed.description=f"I cannot complete this command because of network issues. I might have been rate limited. Please try again later."
-            return await ctx.send(embed=embed)
+            await ctx.send("I cannot complete this command because of network issues. I might have been rate limited. Please try again later.")
+            return None
 
         # Command raised an unexpected error
         elif isinstance(error, commands.CommandInvokeError):
@@ -193,8 +188,8 @@ class DiscordBot(commands.Bot):
                 ctx.guild.name, ctx.guild.id, original,
                 exc_info=(type(original), original, original.__traceback__),
             )
-            embed.description="An error occurred while executing the command."
-            return await ctx.send(embed=embed)
+            await ctx.send("An error occurred while executing the command.")
+            return None
 
 
         # Other errors
@@ -206,8 +201,8 @@ class DiscordBot(commands.Bot):
                 ctx.guild.name, ctx.guild.id, error,
                 exc_info=(type(error), error, error.__traceback__),
             )
-            embed.description="An unexpected error occurred while executing the command."
-            return await ctx.send(embed=embed)
+            await ctx.send("An unexpected error occurred while executing the command.")
+            return None
 
 
 # Run the bot
