@@ -9,7 +9,7 @@ from discord.ext.commands import Context
 from utils.fetch import fetch_json
 from utils.fetch import fetch_img
 
-from settings import EMBED_COLOR
+from config import EMBED_COLOR
 
 
 class Fun(commands.Cog):
