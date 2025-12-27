@@ -12,8 +12,6 @@ To run the bot, you can use docker or source. For authentication, get a bot toke
 docker run -d \
   --name=orbit \
   -e BOT_TOKEN=your-bot-token \
-  -e BOT_PREFIX=your-bot-prefix \
-  -e BOT_COLOR=0x7289DA `#optional` \
   ghcr.io/tibor309/orbit:latest
 ```
 
@@ -24,11 +22,10 @@ Before running the bot, make sure to install all the required python packages wi
 pip3 install -r requirements.txt
 ```
 
-Create an `.env` file to store your variables. The file should look like this:
+Create an `.env` file according to the `.env.example` file! Do not share your bot token with anyone!
+
 ```
-BOT_TOKEN=your-bot-token
-BOT_PREFIX=your-bot-prefix
-BOT_COLOR=embed-color
+BOT_TOKEN=your_bot_token_here
 ```
 
 If you're ready, run the bot with the `python3 main.py` command!
