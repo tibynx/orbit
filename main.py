@@ -147,9 +147,16 @@ class DiscordBot(commands.Bot):
             minutes, seconds = divmod(error.retry_after, 60)
             hours, minutes = divmod(minutes, 60)
             hours = hours % 24
-            await send_msg(
-                f"You can use this command again in {f'{round(hours)} hours' if round(hours) > 0 else ''} {f'{round(minutes)} minutes' if round(minutes) > 0 else ''} {f'{round(seconds)} seconds' if round(seconds) > 0 else ''}."
-            )
+            # Build time components
+            time_parts = []
+            if round(hours) > 0:
+                time_parts.append(f"{round(hours)} hours")
+            if round(minutes) > 0:
+                time_parts.append(f"{round(minutes)} minutes")
+            if round(seconds) > 0:
+                time_parts.append(f"{round(seconds)} seconds")
+            time_str = " ".join(time_parts) if time_parts else "a moment"
+            await send_msg(f"You can use this command again in {time_str}.")
             return None
 
         # User doesn't have permission to execute the command
@@ -183,7 +190,8 @@ class DiscordBot(commands.Bot):
                 interaction.guild.name, interaction.guild.id, error
             )
             await send_msg(
-                "I cannot complete this command because of network issues. I might have been rate limited. Please try again later."
+                "I cannot complete this command because of network issues. "
+                "I might have been rate limited. Please try again later."
             )
             return None
 
