@@ -42,13 +42,13 @@ class Random(commands.Cog):
     async def random_color(self, interaction: discord.Interaction):
         await interaction.response.defer()
         # Generate random RGB values
-        r = random.randint(0, 255)
-        g = random.randint(0, 255)
-        b = random.randint(0, 255)
+        red = random.randint(0, 255)
+        green = random.randint(0, 255)
+        blue = random.randint(0, 255)
         # Use API to get data
         data = await fetch_json(
             self.bot.session,
-            f"https://www.thecolorapi.com/id?rgb=rgb({r},{g},{b})"
+            f"https://www.thecolorapi.com/id?rgb=rgb({red},{green},{blue})"
         )
         if data:
             embed = discord.Embed(
@@ -56,7 +56,7 @@ class Random(commands.Cog):
                 color=None
             )
             embed.add_field(name="HEX", value=data["hex"]["value"], inline=True)
-            embed.add_field(name="RGB", value=f"rgb({r},{g},{b})", inline=True)
+            embed.add_field(name="RGB", value=f"rgb({red},{green},{blue})", inline=True)
             embed.add_field(name="HSL", value=data["hsl"]["value"], inline=True)
             # Use different URL for an image
             embed.set_thumbnail(url=f"https://singlecolorimage.com/get/{data['hex']['clean']}/100x100")
