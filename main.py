@@ -12,7 +12,6 @@ from config import BOT_TOKEN
 # TODO: Add better error handling
 # TODO: Add more commands and cogs
 # TODO: Use buttons, components where applicable
-# TODO: Update ignore files
 # TODO: Replace some embeds with components
 
 
