@@ -156,30 +156,32 @@ class DiscordBot(commands.Bot):
             if round(seconds) > 0:
                 time_parts.append(f"{round(seconds)} seconds")
             time_str = " ".join(time_parts) if time_parts else "a moment"
-            await send_msg(f"You can use this command again in {time_str}.")
-            return None
+            await send_msg(
+                f"You can use this command again in {time_str}.",
+                ephemeral=True
+            )
 
         # User doesn't have permission to execute the command
-        elif isinstance(error, (app_commands.MissingPermissions, app_commands.CheckFailure)):
+        if isinstance(error, (app_commands.MissingPermissions, app_commands.errors.CheckFailure)):
             await send_msg(
-                "You don't have permission to execute this command."
+                "You don't have permission to execute this command.",
+                ephemeral=True
             )
-            return None
 
         # Bot doesn't have permission to execute the command
         elif isinstance(error, (app_commands.BotMissingPermissions, discord.Forbidden)):
             await send_msg(
-                "I don't have permission to execute this command."
+                "I don't have permission to execute this command.",
+                ephemeral=True
             )
-            return None
 
         # Command doesn't exist
         # Happens when a command is updated, but the client hasn't refreshed
         elif isinstance(error, app_commands.CommandNotFound):
             await send_msg(
-                "Command not found. Please refresh your client."
+                "Command not found. Please refresh your client.",
+                ephemeral=True
             )
-            return None
 
         # Network issues or rate limiting
         elif isinstance(error, discord.HTTPException):
@@ -191,9 +193,9 @@ class DiscordBot(commands.Bot):
             )
             await send_msg(
                 "I cannot complete this command because of network issues. "
-                "I might have been rate limited. Please try again later."
+                "I might have been rate limited. Please try again later.",
+                ephemeral=True
             )
-            return None
 
         # Command raised an unexpected error
         elif isinstance(error, app_commands.CommandInvokeError):
@@ -205,9 +207,10 @@ class DiscordBot(commands.Bot):
                 interaction.guild.name, interaction.guild.id, original,
                 exc_info=(type(original), original, original.__traceback__),
             )
-            await send_msg("An error occurred while executing the command.")
-            return None
-
+            await send_msg(
+                "An error occurred while executing the command.",
+                ephemeral=True
+            )
 
         # Other errors
         else:
@@ -218,8 +221,10 @@ class DiscordBot(commands.Bot):
                 interaction.guild.name, interaction.guild.id, error,
                 exc_info=(type(error), error, error.__traceback__),
             )
-            await send_msg("An unexpected error occurred while executing the command.")
-            return None
+            await send_msg(
+                "An unexpected error occurred while executing the command.",
+                ephemeral=True
+            )
 
 
 # Run the bot
