@@ -63,7 +63,16 @@ class Random(commands.Cog):
                 embed.add_field(name="HSL", value=data["hsl"]["value"], inline=True)
                 # Use different URL for an image
                 embed.set_thumbnail(url=f"https://singlecolorimage.com/get/{data['hex']['clean']}/100x100")
-                await interaction.followup.send(embed=embed)
+                # Create a view with a link button
+                hex_clean = data["hex"]["clean"]
+                view = discord.ui.View()
+                view.add_item(
+                    discord.ui.Button(
+                        label="View on ColorHexa",
+                        url=f"https://www.colorhexa.com/{hex_clean}"
+                    )
+                )
+                await interaction.followup.send(embed=embed, view=view)
             else:
                 await interaction.followup.send(
                     "There was an error with the API, try again later.",
