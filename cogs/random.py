@@ -7,7 +7,6 @@ from utils.fetch import fetch_json
 
 
 # TODO: Do pylint, and fix code
-# TODO: Add more comments
 
 
 # Random commands
@@ -25,6 +24,7 @@ class Random(commands.Cog):
     async def random_fact(self, interaction: discord.Interaction):
         await interaction.response.defer()
         async with aiohttp.ClientSession() as session:
+            # Use API to get data
             data = await fetch_json(session, "https://api.popcat.xyz/v2/fact")
             if data:
                 text = data["message"]["fact"]
