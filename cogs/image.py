@@ -6,7 +6,6 @@ from utils.fetch import fetch_json, fetch_img
 
 
 # TODO: Do pylint, and fix code
-# TODO: Add more comments
 
 
 # Image commands
@@ -23,6 +22,7 @@ class Image(commands.Cog):
     )
     async def meme(self, interaction: discord.Interaction):
         await interaction.response.defer()
+        # Fetch meme data
         async with aiohttp.ClientSession() as session:
             data = await fetch_json(session, "https://meme-api.com/gimme")
             if data:
@@ -32,6 +32,7 @@ class Image(commands.Cog):
                     description=f"-# Posted by **@{data['author']}** on **r/{data['subreddit']}**",
                     color=None
                 )
+                # Set meme image
                 embed.set_image(url=data["url"])
                 await interaction.followup.send(embed=embed)
             else:
@@ -49,7 +50,9 @@ class Image(commands.Cog):
     @app_commands.describe(user="The user you want to pet.")
     async def pet(self, interaction: discord.Interaction, user: discord.User):
         await interaction.response.defer()
+        # Fetch petting GIF
         async with aiohttp.ClientSession() as session:
+            # Use user's avatar URL
             image = await fetch_img(
                 session,
                 f"https://api.popcat.xyz/v2/pet?image={user.display_avatar.url}"
@@ -71,6 +74,7 @@ class Image(commands.Cog):
     async def lynx(self, interaction: discord.Interaction):
         await interaction.response.defer()
         async with aiohttp.ClientSession() as session:
+            # Fetch lynx image
             image = await fetch_img(session, "https://api.tinyfox.dev/img?animal=lynx")
             if image:
                 await interaction.followup.send(file=discord.File(image, "lynx.png"))
