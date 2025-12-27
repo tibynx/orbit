@@ -1,6 +1,7 @@
 import logging
 import os
 import discord
+import aiohttp
 from discord import app_commands
 from discord.ext import commands
 from config import BOT_TOKEN
@@ -40,6 +41,7 @@ class DiscordBot(commands.Bot):
         # No prefix since we use app commands
         super().__init__(command_prefix="", intents=intents)
         self.logger = logger
+        self.session = None
 
 
     # Load cogs
@@ -58,6 +60,8 @@ class DiscordBot(commands.Bot):
 
 
     async def setup_hook(self) -> None:
+        # Create reusable aiohttp session
+        self.session = aiohttp.ClientSession()
         self.logger.info(
             "Logged in as %s#%s (ID: %s)", self.user.name, self.user.discriminator, self.user.id
         )
@@ -73,6 +77,12 @@ class DiscordBot(commands.Bot):
             self.logger.error("Failed to sync interaction: %s", type(error).__name__)
             self.logger.exception(error)
 
+
+    async def close(self) -> None:
+        # Close the aiohttp session before shutting down
+        if self.session:
+            await self.session.close()
+        await super().close()
 
     # Make sure the bot doesn't respond to itself
     async def on_message(self, message: discord.Message) -> None:
