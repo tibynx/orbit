@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 from utils.fetch import fetch_json, fetch_img
+import urllib.parse
 
 
 # TODO: Do pylint, and fix code
@@ -52,10 +53,10 @@ class Image(commands.Cog):
         await interaction.response.defer()
         # Fetch petting GIF
         async with aiohttp.ClientSession() as session:
-            # Use user's avatar URL
+            encoded_avatar = urllib.parse.quote(user.display_avatar.url, safe="")
             image = await fetch_img(
                 session,
-                f"https://api.popcat.xyz/v2/pet?image={user.display_avatar.url}"
+                f"https://api.popcat.xyz/v2/pet?image={encoded_avatar}"
             )
             if image:
                 await interaction.followup.send(file=discord.File(image, "pet.gif"))
