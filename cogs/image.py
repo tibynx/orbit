@@ -1,4 +1,3 @@
-import aiohttp
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -24,23 +23,22 @@ class Image(commands.Cog):
     async def meme(self, interaction: discord.Interaction):
         await interaction.response.defer()
         # Fetch meme data
-        async with aiohttp.ClientSession() as session:
-            data = await fetch_json(session, "https://meme-api.com/gimme")
-            if data:
-                embed = discord.Embed(
-                    title=data["title"],
-                    url=data["postLink"],
-                    description=f"-# Posted by **@{data['author']}** on **r/{data['subreddit']}**",
-                    color=None
-                )
-                # Set meme image
-                embed.set_image(url=data["url"])
-                await interaction.followup.send(embed=embed)
-            else:
-                await interaction.followup.send(
-                    "There was an error fetching a meme. Please try again later.",
-                    ephemeral=True
-                )
+        data = await fetch_json(self.bot.session, "https://meme-api.com/gimme")
+        if data:
+            embed = discord.Embed(
+                title=data["title"],
+                url=data["postLink"],
+                description=f"-# Posted by **@{data['author']}** on **r/{data['subreddit']}**",
+                color=None
+            )
+            # Set meme image
+            embed.set_image(url=data["url"])
+            await interaction.followup.send(embed=embed)
+        else:
+            await interaction.followup.send(
+                "There was an error fetching a meme. Please try again later.",
+                ephemeral=True
+            )
 
 
     # Generate pet gif
@@ -52,19 +50,18 @@ class Image(commands.Cog):
     async def pet(self, interaction: discord.Interaction, user: discord.User):
         await interaction.response.defer()
         # Fetch petting GIF
-        async with aiohttp.ClientSession() as session:
-            encoded_avatar = urllib.parse.quote(user.display_avatar.url, safe="")
-            image = await fetch_img(
-                session,
-                f"https://api.popcat.xyz/v2/pet?image={encoded_avatar}"
+        encoded_avatar = urllib.parse.quote(user.display_avatar.url, safe="")
+        image = await fetch_img(
+            self.bot.session,
+            f"https://api.popcat.xyz/v2/pet?image={encoded_avatar}"
+        )
+        if image:
+            await interaction.followup.send(file=discord.File(image, "pet.gif"))
+        else:
+            await interaction.followup.send(
+                "There was an error fetching the image. Please try again later.",
+                ephemeral=True
             )
-            if image:
-                await interaction.followup.send(file=discord.File(image, "pet.gif"))
-            else:
-                await interaction.followup.send(
-                    "There was an error fetching the image. Please try again later.",
-                    ephemeral=True
-                )
 
 
     # Send random images of lynxes
@@ -74,16 +71,15 @@ class Image(commands.Cog):
     )
     async def lynx(self, interaction: discord.Interaction):
         await interaction.response.defer()
-        async with aiohttp.ClientSession() as session:
-            # Fetch lynx image
-            image = await fetch_img(session, "https://api.tinyfox.dev/img?animal=lynx")
-            if image:
-                await interaction.followup.send(file=discord.File(image, "lynx.png"))
-            else:
-                await interaction.followup.send(
-                    "There was an error fetching the image. Please try again later.",
-                    ephemeral=True
-                )
+        # Fetch lynx image
+        image = await fetch_img(self.bot.session, "https://api.tinyfox.dev/img?animal=lynx")
+        if image:
+            await interaction.followup.send(file=discord.File(image, "lynx.png"))
+        else:
+            await interaction.followup.send(
+                "There was an error fetching the image. Please try again later.",
+                ephemeral=True
+            )
 
 
 

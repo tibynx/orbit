@@ -1,4 +1,3 @@
-import aiohttp
 import random
 import discord
 from discord.ext import commands
@@ -23,17 +22,16 @@ class Random(commands.Cog):
     )
     async def random_fact(self, interaction: discord.Interaction):
         await interaction.response.defer()
-        async with aiohttp.ClientSession() as session:
-            # Use API to get data
-            data = await fetch_json(session, "https://api.popcat.xyz/v2/fact")
-            if data:
-                text = data["message"]["fact"]
-                await interaction.followup.send(text.replace("`", "'"))
-            else:
-                await interaction.followup.send(
-                    "There was an error with the API, try again later.",
-                    ephemeral=True
-                )
+        # Use API to get data
+        data = await fetch_json(self.bot.session, "https://api.popcat.xyz/v2/fact")
+        if data:
+            text = data["message"]["fact"]
+            await interaction.followup.send(text.replace("`", "'"))
+        else:
+            await interaction.followup.send(
+                "There was an error with the API, try again later.",
+                ephemeral=True
+            )
 
 
     # Get a random color
@@ -48,36 +46,35 @@ class Random(commands.Cog):
         g = random.randint(0, 255)
         b = random.randint(0, 255)
         # Use API to get data
-        async with aiohttp.ClientSession() as session:
-            data = await fetch_json(
-                session,
-                f"https://www.thecolorapi.com/id?rgb=rgb({r},{g},{b})"
+        data = await fetch_json(
+            self.bot.session,
+            f"https://www.thecolorapi.com/id?rgb=rgb({r},{g},{b})"
+        )
+        if data:
+            embed = discord.Embed(
+                title=data["name"]["value"],
+                color=None
             )
-            if data:
-                embed = discord.Embed(
-                    title=data["name"]["value"],
-                    color=None
+            embed.add_field(name="HEX", value=data["hex"]["value"], inline=True)
+            embed.add_field(name="RGB", value=f"rgb({r},{g},{b})", inline=True)
+            embed.add_field(name="HSL", value=data["hsl"]["value"], inline=True)
+            # Use different URL for an image
+            embed.set_thumbnail(url=f"https://singlecolorimage.com/get/{data['hex']['clean']}/100x100")
+            # Create a view with a link button
+            hex_clean = data["hex"]["clean"]
+            view = discord.ui.View()
+            view.add_item(
+                discord.ui.Button(
+                    label="View on ColorHexa",
+                    url=f"https://www.colorhexa.com/{hex_clean}"
                 )
-                embed.add_field(name="HEX", value=data["hex"]["value"], inline=True)
-                embed.add_field(name="RGB", value=f"rgb({r},{g},{b})", inline=True)
-                embed.add_field(name="HSL", value=data["hsl"]["value"], inline=True)
-                # Use different URL for an image
-                embed.set_thumbnail(url=f"https://singlecolorimage.com/get/{data['hex']['clean']}/100x100")
-                # Create a view with a link button
-                hex_clean = data["hex"]["clean"]
-                view = discord.ui.View()
-                view.add_item(
-                    discord.ui.Button(
-                        label="View on ColorHexa",
-                        url=f"https://www.colorhexa.com/{hex_clean}"
-                    )
-                )
-                await interaction.followup.send(embed=embed, view=view)
-            else:
-                await interaction.followup.send(
-                    "There was an error with the API, try again later.",
-                    ephemeral=True
-                )
+            )
+            await interaction.followup.send(embed=embed, view=view)
+        else:
+            await interaction.followup.send(
+                "There was an error with the API, try again later.",
+                ephemeral=True
+            )
 
 
 
