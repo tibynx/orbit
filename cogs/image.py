@@ -1,3 +1,4 @@
+"""Cog for image-related commands."""
 import urllib.parse
 import discord
 from discord.ext import commands
@@ -10,7 +11,9 @@ from utils.fetch import fetch_json, fetch_img
 
 # Image commands
 class Image(commands.Cog):
+    """Commands for fetching and displaying images."""
     def __init__(self, bot):
+        """Initialize the Image cog."""
         self.bot = bot
 
 
@@ -21,6 +24,7 @@ class Image(commands.Cog):
         description="Send a random meme from reddit."
     )
     async def meme(self, interaction: discord.Interaction):
+        """Send a random meme from Reddit using the meme API."""
         await interaction.response.defer()
         # Fetch meme data
         data = await fetch_json(self.bot.session, "https://meme-api.com/gimme")
@@ -48,6 +52,7 @@ class Image(commands.Cog):
     )
     @app_commands.describe(user="The user you want to pet.")
     async def pet(self, interaction: discord.Interaction, user: discord.User):
+        """Generate a petting GIF animation for a specified user."""
         await interaction.response.defer()
         # Fetch petting GIF
         encoded_avatar = urllib.parse.quote(user.display_avatar.url, safe="")
@@ -70,6 +75,7 @@ class Image(commands.Cog):
         description="Send a random image of a lynx."
     )
     async def lynx(self, interaction: discord.Interaction):
+        """Send a random image of a lynx from the TinyFox API."""
         await interaction.response.defer()
         # Fetch lynx image
         image = await fetch_img(self.bot.session, "https://api.tinyfox.dev/img?animal=lynx")
@@ -84,4 +90,5 @@ class Image(commands.Cog):
 
 
 async def setup(bot):
+    """Set up the Image cog."""
     await bot.add_cog(Image(bot))

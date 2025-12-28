@@ -1,3 +1,4 @@
+"""Cog for random content commands."""
 import random
 import discord
 from discord.ext import commands
@@ -10,7 +11,9 @@ from utils.fetch import fetch_json
 
 # Random commands
 class Random(commands.Cog):
+    """Commands for generating random content."""
     def __init__(self, bot):
+        """Initialize the Random cog with a bot instance."""
         self.bot = bot
 
 
@@ -21,6 +24,7 @@ class Random(commands.Cog):
         description="Get a random fact."
     )
     async def random_fact(self, interaction: discord.Interaction):
+        """Fetch and display a random fact from the PopCat API."""
         await interaction.response.defer()
         # Use API to get data
         data = await fetch_json(self.bot.session, "https://api.popcat.xyz/v2/fact")
@@ -40,6 +44,7 @@ class Random(commands.Cog):
         description="Get a random color."
     )
     async def random_color(self, interaction: discord.Interaction):
+        """Generate and display a random color."""
         await interaction.response.defer()
         # Generate random RGB values
         red = random.randint(0, 255)
@@ -81,4 +86,5 @@ class Random(commands.Cog):
 
 
 async def setup(bot):
+    """Set up the Random cog."""
     await bot.add_cog(Random(bot))
