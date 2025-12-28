@@ -9,8 +9,7 @@ from config import BOT_TOKEN
 
 # TODO: Do pylint, and fix code
 # TODO: Add more comments and docstrings
-# TODO: Update README.md, Dockerfile, and poetry config
-# TODO: Add better error handling
+# TODO: Update Dockerfile
 # TODO: Add more commands and cogs
 # TODO: Use buttons, components where applicable
 # TODO: Replace some embeds with components
