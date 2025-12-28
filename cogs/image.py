@@ -1,8 +1,8 @@
+import urllib.parse
 import discord
 from discord.ext import commands
 from discord import app_commands
 from utils.fetch import fetch_json, fetch_img
-import urllib.parse
 
 
 # TODO: Do pylint, and fix code
