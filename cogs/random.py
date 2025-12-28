@@ -59,7 +59,9 @@ class Random(commands.Cog):
             embed.add_field(name="RGB", value=f"rgb({red},{green},{blue})", inline=True)
             embed.add_field(name="HSL", value=data["hsl"]["value"], inline=True)
             # Use different URL for an image
-            embed.set_thumbnail(url=f"https://singlecolorimage.com/get/{data['hex']['clean']}/100x100")
+            embed.set_thumbnail(
+                url=f"https://singlecolorimage.com/get/{data['hex']['clean']}/100x100"
+            )
             # Create a view with a link button
             hex_clean = data["hex"]["clean"]
             view = discord.ui.View()
