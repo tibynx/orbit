@@ -18,15 +18,15 @@ FROM python:3.22-alpine
 
 # set labels
 ARG IMAGE_BUILD_DATE
-LABEL org.opencontainers.image.authors="tibor309"
+LABEL org.opencontainers.image.authors="tibynx"
 LABEL org.opencontainers.image.created="${IMAGE_BUILD_DATE}"
 LABEL org.opencontainers.image.description="A simple discord bot made with discord.py"
-LABEL org.opencontainers.image.documentation="https://github.com/tibor309/orbit/blob/main/README.md"
+LABEL org.opencontainers.image.documentation="https://github.com/tibynx/orbit/blob/main/README.md"
 LABEL org.opencontainers.image.licenses="GPL-3.0"
-LABEL org.opencontainers.image.source="https://github.com/tibor309/orbit"
+LABEL org.opencontainers.image.source="https://github.com/tibynx/orbit"
 LABEL org.opencontainers.image.title="Orbit"
-LABEL org.opencontainers.image.url="https://github.com/tibor309/orbit/packages"
-LABEL org.opencontainers.image.vendor="tibor309"
+LABEL org.opencontainers.image.url="https://github.com/tibynx/orbit/packages"
+LABEL org.opencontainers.image.vendor="tibynx"
 LABEL org.opencontainers.image.base.name="python:3.22-alpine"
 LABEL org.opencontainers.image.base.documentation="https://hub.docker.com/_/python"
 
