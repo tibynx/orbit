@@ -37,6 +37,6 @@ Then, you can run the bot using the `python main.py` command!
 
 ### Environment Variables
 
-|  Variable  | Description                                                                                                     |
-|:----------:|-----------------------------------------------------------------------------------------------------------------|
-| BOT_TOKEN  | Your bot token. Do not share this with anyone!                                                                  |
+| Variable  | Description                                    |
+|:---------:|------------------------------------------------|
+| BOT_TOKEN | Your bot token. Do not share this with anyone! |
