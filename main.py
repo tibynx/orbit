@@ -1,3 +1,4 @@
+"""Main entry point for the Discord bot."""
 import logging
 import os
 import aiohttp
@@ -7,8 +8,6 @@ from discord.ext import commands
 from config import BOT_TOKEN
 
 
-# TODO: Do pylint, and fix code
-# TODO: Add more comments and docstrings
 # TODO: Update Dockerfile
 # TODO: Add more commands and cogs
 # TODO: Use buttons, components where applicable
@@ -36,7 +35,9 @@ logger.addHandler(log_handler)
 
 
 class DiscordBot(commands.Bot):
+    """Custom Discord bot with cog loading and error handling."""
     def __init__(self) -> None:
+        """Initialize the Discord bot with intents and logging."""
         # No prefix since we use app commands
         super().__init__(command_prefix="", intents=intents)
         self.logger = logger
@@ -45,6 +46,7 @@ class DiscordBot(commands.Bot):
 
     # Load cogs
     async def load_cogs(self) -> None:
+        """Load all cogs from the cogs directory."""
         for file in os.listdir(os.path.join(os.path.realpath(os.path.dirname(__file__)), "cogs")):
             if file.endswith(".py"): # Only load python files
                 extension = file[:-3]
@@ -59,6 +61,7 @@ class DiscordBot(commands.Bot):
 
 
     async def setup_hook(self) -> None:
+        """Set up the bot by creating a session, loading cogs, and syncing commands."""
         # Create reusable aiohttp session
         self.session = aiohttp.ClientSession()
         self.logger.info(
@@ -78,6 +81,7 @@ class DiscordBot(commands.Bot):
 
 
     async def close(self) -> None:
+        """Close the aiohttp session and shut down the bot."""
         # Close the aiohttp session before shutting down
         if self.session:
             await self.session.close()
@@ -85,6 +89,7 @@ class DiscordBot(commands.Bot):
 
     # Make sure the bot doesn't respond to itself
     async def on_message(self, message: discord.Message) -> None:
+        """Handle incoming messages and ignore bot messages."""
         if message.author == self.user or message.author.bot:
             return
         await self.process_commands(message)
@@ -92,6 +97,7 @@ class DiscordBot(commands.Bot):
 
     # Log guild join
     async def on_guild_join(self, guild: discord.Guild) -> None:
+        """Log when the bot joins a guild."""
         self.logger.info(
             "Joined guild '%s' (ID: %s) with %d member(s), the guild owner is %s (ID: %s)",
             guild.name, guild.id, len(guild.members), guild.owner, guild.owner.id
@@ -99,6 +105,7 @@ class DiscordBot(commands.Bot):
 
     # Log guild leave
     async def on_guild_remove(self, guild: discord.Guild) -> None:
+        """Log when the bot leaves a guild."""
         self.logger.info(
             "Left guild '%s' (ID: %s) with %d member(s), the guild owner is %s (ID: %s)",
             guild.name, guild.id, len(guild.members), guild.owner, guild.owner.id
@@ -108,6 +115,7 @@ class DiscordBot(commands.Bot):
     async def on_app_command_completion(
             self, interaction: discord.Interaction, command: app_commands.Command
     ) -> None:
+        """Log when an app command is successfully executed."""
         if interaction.guild is not None:
             self.logger.info(
                 "User %s (ID: %s) executed the '%s' interaction in guild '%s' (ID: %s)",
@@ -122,9 +130,11 @@ class DiscordBot(commands.Bot):
 
     # Log command errors
     async def on_error(self, event_name: str, *args, **kwargs) -> None:
+        """Log when a general error occurs in an event."""
         self.logger.exception("An error occurred in %s", event_name)
 
     async def on_command_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
+        """Handle and log command errors."""
         if isinstance(error, commands.CommandNotFound):
             return  # Ignore command not found errors
         self.logger.error("An unhandled command error occurred: %s", error)
@@ -132,6 +142,7 @@ class DiscordBot(commands.Bot):
     async def on_app_command_error(
             self, interaction: discord.Interaction, error: app_commands.AppCommandError
     ) -> None:
+        """Handle and log app command errors with user-friendly messages."""
         # Get the command name
         command_name = interaction.command.name if interaction.command else "Unknown command"
 

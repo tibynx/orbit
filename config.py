@@ -1,3 +1,4 @@
+"""Configuration module for loading environment variables."""
 import os
 from dotenv import load_dotenv
 
