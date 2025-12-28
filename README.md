@@ -40,3 +40,12 @@ Then, you can run the bot using the `python main.py` command!
 | Variable  | Description                                    |
 |:---------:|------------------------------------------------|
 | BOT_TOKEN | Your bot token. Do not share this with anyone! |
+
+
+## Usage
+
+After setting up, invite your bot to a server using this premade link! It already contains the proper permissions. Replace `<app-id>` with your bot's appication ID.
+
+```sh
+https://discord.com/oauth2/authorize?client_id=<app-id>&permissions=277025508352&integration_type=0&scope=bot+applications.commands
+```
