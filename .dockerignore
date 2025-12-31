@@ -11,6 +11,13 @@ ENV/
 env.bak/
 venv.bak/
 
+# Byte-compiled / optimized / DLL files
+__pycache__/
+cogs/__pycache__/
+*.py[cod]
+*$py.class
+bin/
+
 # Distribution / packaging
 .Python
 build/
@@ -32,6 +39,7 @@ share/python-wheels/
 MANIFEST
 
 # Project files
+.github/
 logs/
 .gitignore
 README.md
