@@ -1,6 +1,6 @@
 # 🌑 Orbit
 
-Orbit is a simple discord bot made with discord.py. You can get funny memes, cool facts, and much more! This bot uses hybrid commands, which means you can use both slash commands and traditional prefixed commands.
+Orbit is a simple Discord bot made with Discord.py.
 
 ## Setup
 
