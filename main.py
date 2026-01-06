@@ -42,6 +42,7 @@ class DiscordBot(commands.Bot):
         super().__init__(command_prefix="", intents=intents)
         self.logger = logger
         self.session = None
+        self.tree.on_error = self.on_app_command_error
 
 
     # Load cogs
@@ -172,16 +173,23 @@ class DiscordBot(commands.Bot):
             )
 
         # User doesn't have permission to execute the command
-        if isinstance(error, (app_commands.MissingPermissions, app_commands.errors.CheckFailure)):
+        elif isinstance(error, app_commands.MissingPermissions):
             await send_msg(
                 "You don't have permission to execute this command.",
                 ephemeral=True
             )
 
         # Bot doesn't have permission to execute the command
-        elif isinstance(error, (app_commands.BotMissingPermissions, discord.Forbidden)):
+        elif isinstance(error, app_commands.BotMissingPermissions):
             await send_msg(
                 "I don't have permission to execute this command.",
+                ephemeral=True
+            )
+
+        # Generic check failure
+        elif isinstance(error, app_commands.CheckFailure):
+            await send_msg(
+                "You cannot execute this command.",
                 ephemeral=True
             )
 
@@ -193,28 +201,16 @@ class DiscordBot(commands.Bot):
                 ephemeral=True
             )
 
-        # Network issues or rate limiting
-        elif isinstance(error, discord.HTTPException):
-            self.logger.warning(
-                "HTTP exception occurred in interaction '%s' for user %s (ID: %s) in "
-                "guild '%s' (ID: %s): %s",
-                command_name, interaction.user.name, interaction.user.id,
-                interaction.guild.name, interaction.guild.id, error
-            )
-            await send_msg(
-                "I cannot complete this command because of network issues. "
-                "I might have been rate limited. Please try again later.",
-                ephemeral=True
-            )
-
         # Command raised an unexpected error
         elif isinstance(error, app_commands.CommandInvokeError):
             original = getattr(error, "original", error)
+            # Log the error with guild context if available
+            guild_info = f"guild '{interaction.guild.name}' (ID: {interaction.guild.id})" \
+                if interaction.guild else "DMs"
+
             self.logger.error(
-                "CommandInvokeError occurred in interaction '%s' by user %s (ID: %s) in "
-                "guild '%s' (ID: %s): %r",
-                command_name, interaction.user.name, interaction.user.id,
-                interaction.guild.name, interaction.guild.id, original,
+                "CommandInvokeError occurred in interaction '%s' by user %s (ID: %s) in %s: %r",
+                command_name, interaction.user.name, interaction.user.id, guild_info, original,
                 exc_info=(type(original), original, original.__traceback__),
             )
             await send_msg(
@@ -224,11 +220,13 @@ class DiscordBot(commands.Bot):
 
         # Other errors
         else:
+            # Log the error with guild context if available
+            guild_info = f"guild '{interaction.guild.name}' (ID: {interaction.guild.id})" \
+                if interaction.guild else "DMs"
+
             self.logger.error(
-                "Unhandled app command error in interaction '%s' by user %s (ID: %s) in "
-                "guild '%s' (ID: %s): %r",
-                command_name, interaction.user.name, interaction.user.id,
-                interaction.guild.name, interaction.guild.id, error,
+                "Unhandled app command error in interaction '%s' by user %s (ID: %s) in %s: %r",
+                command_name, interaction.user.name, interaction.user.id, guild_info, error,
                 exc_info=(type(error), error, error.__traceback__),
             )
             await send_msg(
