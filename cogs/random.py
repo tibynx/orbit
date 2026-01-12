@@ -118,6 +118,28 @@ class Random(commands.Cog):
             )
 
 
+    # Get a random dad joke
+    @app_commands.command(
+        name="dadjoke",
+        description="Get a random dad joke."
+    )
+    async def random_dadjoke(self, interaction: discord.Interaction):
+        """Get a random dad joke from the icanhazdadjoke API."""
+        await interaction.response.defer()
+        # Use API to get data
+        data = await fetch_json(
+            self.bot.session,
+            "https://icanhazdadjoke.com/"
+        )
+        if data:
+            await interaction.followup.send(data["joke"])
+        else:
+            await interaction.followup.send(
+                "There was an error with the API, try again later.",
+                ephemeral=True
+            )
+
+
 
 async def setup(bot):
     """Set up the Random cog."""
