@@ -5,7 +5,7 @@ import aiohttp
 import discord
 from discord import app_commands
 from discord.ext import commands
-from config import BOT_TOKEN
+from config import BOT_TOKEN, USER_AGENT
 
 
 # TODO: Update Dockerfile
@@ -64,7 +64,10 @@ class DiscordBot(commands.Bot):
     async def setup_hook(self) -> None:
         """Set up the bot by creating a session, loading cogs, and syncing commands."""
         # Create reusable aiohttp session
-        self.session = aiohttp.ClientSession()
+        self.session = aiohttp.ClientSession(headers={
+            f"User-Agent": USER_AGENT,
+            "Accept": "application/json"
+        })
         self.logger.info(
             "Logged in as %s#%s (ID: %s)", self.user.name, self.user.discriminator, self.user.id
         )
