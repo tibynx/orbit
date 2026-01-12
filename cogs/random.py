@@ -84,6 +84,40 @@ class Random(commands.Cog):
             )
 
 
+    # Get a random element
+    @app_commands.command(
+        name="element",
+        description="Get a random element from the periodic table."
+    )
+    async def random_element(self, interaction: discord.Interaction):
+        """Get a random element from the periodic table."""
+        await interaction.response.defer()
+        # Use API to get data
+        data = await fetch_json(
+            self.bot.session,
+            "https://api.popcat.xyz/v2/periodic-table/random"
+        )
+        if data:
+            embed = discord.Embed(
+                title=data["message"]["name"],
+                description=f"> {data["message"]["summary"]}",
+                color=None
+            )
+            embed.add_field(name="Symbol", value=data["message"]["symbol"])
+            embed.add_field(name="Phase", value=data["message"]["phase"])
+            embed.add_field(name="Period", value=data["message"]["period"])
+            embed.add_field(name="Atomic Number", value=data["message"]["atomic_number"])
+            embed.add_field(name="Atomic Mass", value=data["message"]["atomic_mass"])
+            embed.add_field(name="Discovered By", value=data["message"]["discovered_by"])
+            embed.set_thumbnail(url=data["message"]["image"])
+            await interaction.followup.send(embed=embed)
+        else:
+            await interaction.followup.send(
+                "There was an error with the API, try again later.",
+                ephemeral=True
+            )
+
+
 
 async def setup(bot):
     """Set up the Random cog."""
