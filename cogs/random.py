@@ -6,17 +6,12 @@ from discord import app_commands
 from utils.fetch import fetch_json
 
 
-# TODO: Do pylint, and fix code
-
-
 # Random commands
 class Random(commands.Cog):
     """Commands for generating random content."""
     def __init__(self, bot):
         """Initialize the Random cog with a bot instance."""
         self.bot = bot
-
-
 
     # Get a random fact
     @app_commands.command(
@@ -36,7 +31,6 @@ class Random(commands.Cog):
                 "There was an error with the API, try again later.",
                 ephemeral=True
             )
-
 
     # Get a random color
     @app_commands.command(
@@ -83,7 +77,6 @@ class Random(commands.Cog):
                 ephemeral=True
             )
 
-
     # Get a random element
     @app_commands.command(
         name="element",
@@ -117,7 +110,6 @@ class Random(commands.Cog):
                 ephemeral=True
             )
 
-
     # Get a random dad joke
     @app_commands.command(
         name="dadjoke",
@@ -138,7 +130,6 @@ class Random(commands.Cog):
                 "There was an error with the API, try again later.",
                 ephemeral=True
             )
-
 
 
 async def setup(bot):
