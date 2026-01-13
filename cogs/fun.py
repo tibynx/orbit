@@ -21,6 +21,7 @@ class Fun(commands.Cog):
     )
     @app_commands.describe(question="The question you want the 8ball to answer.")
     async def ball(self, interaction: discord.Interaction, question: str):
+        """Ask the magic 8ball a question."""
         answer = random.choice([
             "It is certain.",
             "It is decidedly so.",
@@ -60,6 +61,7 @@ class Fun(commands.Cog):
     )
     @app_commands.describe(text="The text to encode.")
     async def binary(self, interaction: discord.Interaction, text: str):
+        """Encode text to binary."""
         binary = bin(int.from_bytes(text.encode(), "big"))[2:]
         embed = discord.Embed(
             title="📝 Text to Binary",
@@ -76,6 +78,7 @@ class Fun(commands.Cog):
     )
     @app_commands.describe(binary="The binary to decode.")
     async def decode(self, interaction: discord.Interaction, binary: str):
+        """Decode binary to text."""
         try:
             # Convert binary string to integer, then to bytes
             n = int(binary, 2)
