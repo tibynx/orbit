@@ -13,7 +13,8 @@ If you prefer, you can set up the bot using Docker.
 ```sh
 docker run -d \
   --name=orbit \
-  -e BOT_TOKEN=your_bot_token_here \
+  -e BOT_TOKEN="your_bot_token_here" \
+  -e USER_AGENT="Your Discord Bot (https://github.com/your_name/your_repository)" \
   tibynx/orbit:latest
 ```
 
@@ -31,16 +32,17 @@ In the meantime, create an `.env` file according to the `.env.example` file! Do 
 
 ```sh
 BOT_TOKEN="your_bot_token_here"
+USER_AGENT="Your Discord Bot (https://github.com/your_name/your_repository)"
 ```
 
 Then, you can run the bot using the `python main.py` command!
 
 ### Environment Variables
 
-| Variable  | Description                                    |
-|:---------:|------------------------------------------------|
-| BOT_TOKEN | Your bot token. Do not share this with anyone! |
-
+|  Variable  | Description                                                   |
+|:----------:|---------------------------------------------------------------|
+| BOT_TOKEN  | Your bot token. Do not share this with anyone!                |
+| USER_AGENT | Your bot's user agent. Set this to avoid rate limits by APIs. |
 
 ## Usage
 
