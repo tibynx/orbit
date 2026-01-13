@@ -53,6 +53,44 @@ class Fun(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
 
+    # Encode text to binary
+    @app_commands.command(
+        name="encode",
+        description="Encode text to binary."
+    )
+    @app_commands.describe(text="The text to encode.")
+    async def binary(self, interaction: discord.Interaction, text: str):
+        binary = bin(int.from_bytes(text.encode(), "big"))[2:]
+        embed = discord.Embed(
+            title="📝 Text to Binary",
+            description=f"> {text}\n\n{binary}",
+            color=None
+        )
+        await interaction.response.send_message(embed=embed)
+
+
+    # Decode binary to text
+    @app_commands.command(
+        name="decode",
+        description="Decode binary to text."
+    )
+    @app_commands.describe(binary="The binary to decode.")
+    async def decode(self, interaction: discord.Interaction, binary: str):
+        try:
+            # Convert binary string to integer, then to bytes
+            n = int(binary, 2)
+            text = n.to_bytes((n.bit_length() + 7) // 8, "big").decode()
+
+            embed = discord.Embed(
+                title="📝 Binary to Text",
+                description=f"> {binary}\n\n{text}",
+                color=None
+            )
+            await interaction.response.send_message(embed=embed)
+        except Exception:
+            await interaction.response.send_message("Invalid binary input.", ephemeral=True)
+
+
 
 async def setup(bot):
     """Set up the Fun cog."""
