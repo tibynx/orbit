@@ -137,12 +137,6 @@ class DiscordBot(commands.Bot):
         """Log when a general error occurs in an event."""
         self.logger.exception("An error occurred in %s", event_name)
 
-    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
-        """Handle and log command errors."""
-        if isinstance(error, commands.CommandNotFound):
-            return  # Ignore command not found errors
-        self.logger.error("An unhandled command error occurred: %s", error)
-
     async def on_app_command_error(
             self, interaction: discord.Interaction, error: app_commands.AppCommandError
     ) -> None:
