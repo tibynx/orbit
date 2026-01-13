@@ -1,6 +1,37 @@
 # 🌑 Orbit
 
-Orbit is a simple Discord bot made with Discord.py.
+Orbit is a simple, feature-rich Discord bot designed to bring fun, utility, and entertainment to your server. It integrates various APIs to provide a wide range of commands from games to random facts and image generation.
+
+## Features
+
+- **Fun & Games:** 8ball, text encoding/decoding.
+- **Random Content:** Facts, dad jokes, colors, and periodic table elements.
+- **Images & Memes:** Random memes, user petting GIFs, and lynx photos.
+- **Easy Setup:** Support for both Docker and source-based installation.
+
+## Commands
+
+| Command    | Description                                       |
+|:-----------|:--------------------------------------------------|
+| `/8ball`   | Ask the magic 8ball a question.                   |
+| `/encode`  | Encode text to binary.                            |
+| `/decode`  | Decode binary to text.                            |
+| `/fact`    | Get a random fact.                                |
+| `/color`   | Get a random color with HEX, RGB, and HSL values. |
+| `/element` | Get a random element from the periodic table.     |
+| `/dadjoke` | Get a random dad joke.                            |
+| `/meme`    | Send a random meme from Reddit.                   |
+| `/pet`     | Generate a petting GIF of a user.                 |
+| `/lynx`    | Send a random image of a lynx.                    |
+
+## APIs Used
+
+* [PopCat API](https://popcat.xyz/api)
+* [TinyFox.dev API](https://tinyfox.dev/api-landing)
+* [The Color API](https://www.thecolorapi.com/)
+* [SingleColorImage API](https://singlecolorimage.com/)
+* [icanhazdadjoke API](https://icanhazdadjoke.com/api)
+* [Meme API](https://github.com/D3vd/Meme_Api)
 
 ## Setup
 
