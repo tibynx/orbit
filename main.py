@@ -7,7 +7,6 @@ from discord import app_commands
 from discord.ext import commands
 from config import BOT_TOKEN, USER_AGENT
 
-# TODO: Update Dockerfile
 
 # Set intents
 intents = discord.Intents.default()
@@ -226,5 +225,5 @@ class DiscordBot(commands.Bot):
 bot = DiscordBot()
 
 if not BOT_TOKEN:
-    raise ValueError("BOT_TOKEN not found in environment variables")
+    raise ValueError("Discord bot token was not found in environment variables!")
 bot.run(BOT_TOKEN)
