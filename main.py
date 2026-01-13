@@ -7,12 +7,7 @@ from discord import app_commands
 from discord.ext import commands
 from config import BOT_TOKEN, USER_AGENT
 
-
 # TODO: Update Dockerfile
-# TODO: Add more commands and cogs
-# TODO: Use buttons, components where applicable
-# TODO: Replace some embeds with components
-
 
 # Set intents
 intents = discord.Intents.default()
@@ -43,7 +38,6 @@ class DiscordBot(commands.Bot):
         self.session = None
         self.tree.on_error = self.on_app_command_error
 
-
     # Load cogs
     async def load_cogs(self) -> None:
         """Load all cogs from the cogs directory."""
@@ -59,12 +53,11 @@ class DiscordBot(commands.Bot):
                     )
                     self.logger.exception(error)
 
-
     async def setup_hook(self) -> None:
         """Set up the bot by creating a session, loading cogs, and syncing commands."""
         # Create reusable aiohttp session
         self.session = aiohttp.ClientSession(headers={
-            f"User-Agent": USER_AGENT,
+            "User-Agent": USER_AGENT,
             "Accept": "application/json"
         })
         self.logger.info(
@@ -82,7 +75,6 @@ class DiscordBot(commands.Bot):
             self.logger.error("Failed to sync interaction: %s", type(error).__name__)
             self.logger.exception(error)
 
-
     async def close(self) -> None:
         """Close the aiohttp session and shut down the bot."""
         # Close the aiohttp session before shutting down
@@ -96,7 +88,6 @@ class DiscordBot(commands.Bot):
         if message.author == self.user or message.author.bot:
             return
         await self.process_commands(message)
-
 
     # Log guild join
     async def on_guild_join(self, guild: discord.Guild) -> None:

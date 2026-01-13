@@ -12,8 +12,6 @@ class Fun(commands.Cog):
         """Initialize the Fun cog with a bot instance."""
         self.bot = bot
 
-
-
     # 8ball command
     @app_commands.command(
         name="8ball",
@@ -53,7 +51,6 @@ class Fun(commands.Cog):
         )
         await interaction.response.send_message(embed=embed)
 
-
     # Encode text to binary
     @app_commands.command(
         name="encode",
@@ -69,7 +66,6 @@ class Fun(commands.Cog):
             color=None
         )
         await interaction.response.send_message(embed=embed)
-
 
     # Decode binary to text
     @app_commands.command(
@@ -92,7 +88,6 @@ class Fun(commands.Cog):
             await interaction.response.send_message(embed=embed)
         except Exception:
             await interaction.response.send_message("Invalid binary input.", ephemeral=True)
-
 
 
 async def setup(bot):

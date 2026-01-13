@@ -6,17 +6,12 @@ from discord import app_commands
 from utils.fetch import fetch_json, fetch_img
 
 
-# TODO: Do pylint, and fix code
-
-
 # Image commands
 class Image(commands.Cog):
     """Commands for fetching and displaying images."""
     def __init__(self, bot):
         """Initialize the Image cog."""
         self.bot = bot
-
-
 
     # Send random meme
     @app_commands.command(
@@ -44,7 +39,6 @@ class Image(commands.Cog):
                 ephemeral=True
             )
 
-
     # Generate pet gif
     @app_commands.command(
         name="pet",
@@ -68,7 +62,6 @@ class Image(commands.Cog):
                 ephemeral=True
             )
 
-
     # Send random images of lynxes
     @app_commands.command(
         name="lynx",
@@ -86,7 +79,6 @@ class Image(commands.Cog):
                 "There was an error fetching the image. Please try again later.",
                 ephemeral=True
             )
-
 
 
 async def setup(bot):
