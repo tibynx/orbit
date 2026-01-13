@@ -16,7 +16,6 @@ from config import BOT_TOKEN, USER_AGENT
 
 # Set intents
 intents = discord.Intents.default()
-intents.message_content = True
 
 # Set up logging
 logs_dir = os.path.join(os.path.dirname(__file__), "logs")
