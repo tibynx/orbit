@@ -46,6 +46,7 @@ docker run -d \
   --name=orbit \
   -e BOT_TOKEN="your_bot_token_here" \
   -e USER_AGENT="Your Discord Bot (https://github.com/your_name/your_repository)" \
+  -v path/to/logs:/app/logs \
   tibynx/orbit:latest
 ```
 
