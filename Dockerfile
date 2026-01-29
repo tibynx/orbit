@@ -28,7 +28,7 @@ LABEL org.opencontainers.image.title="Orbit"
 LABEL org.opencontainers.image.description="A simple, feature-rich Discord bot designed to bring fun, utility, and entertainment to your server."
 LABEL org.opencontainers.image.source="https://github.com/tibynx/orbit"
 LABEL org.opencontainers.image.url="https://github.com/tibynx/orbit/packages"
-LABEL org.opencontainers.image.licenses="GPL-3.0"
+LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.base.name="python:3.14-alpine"
 LABEL org.opencontainers.image.base.documentation="https://hub.docker.com/_/python"
 
