@@ -21,13 +21,15 @@ FROM python:3.14-alpine AS runtime-stage
 # set labels
 ARG BUILD_DATE
 ARG VERSION
-LABEL org.opencontainers.image.authors="tibynx (https://github.com/tibynx)"
+LABEL org.opencontainers.image.authors="tibynx"
+LABEL org.opencontainers.image.vendor="tibynx"
 LABEL org.opencontainers.image.created="${BUILD_DATE}"
 LABEL org.opencontainers.image.version="${VERSION}"
 LABEL org.opencontainers.image.title="Orbit"
 LABEL org.opencontainers.image.description="A simple, feature-rich Discord bot designed to bring fun, utility, and entertainment to your server."
-LABEL org.opencontainers.image.source="https://github.com/tibynx/orbit"
-LABEL org.opencontainers.image.url="https://github.com/tibynx/orbit/packages"
+LABEL org.opencontainers.image.documentation="https://github.com/tibynx/orbit-discord-bot/blob/main/README.md"
+LABEL org.opencontainers.image.source="https://github.com/tibynx/orbit-discord-bot"
+LABEL org.opencontainers.image.url="https://github.com/tibynx/orbit-discord-bot/packages"
 LABEL org.opencontainers.image.licenses="MIT"
 LABEL org.opencontainers.image.base.name="python:3.14-alpine"
 LABEL org.opencontainers.image.base.documentation="https://hub.docker.com/_/python"
