@@ -39,7 +39,9 @@ share/python-wheels/
 MANIFEST
 
 # Project files
+.idea/
 .github/
+.env.example
 logs/
 .gitignore
 README.md
