@@ -71,10 +71,10 @@ Then, you can run the bot using the `python main.py` command!
 
 ### Environment Variables
 
-|  Variable  | Description                                                   |
-|:----------:|---------------------------------------------------------------|
-| BOT_TOKEN  | Your bot token. Do not share this with anyone!                |
-| USER_AGENT | Your bot's user agent. Set this to avoid rate limits by APIs. |
+|   Variable   | Description                                                   |
+|:------------:|---------------------------------------------------------------|
+| `BOT_TOKEN`  | Your bot token. Do not share this with anyone!                |
+| `USER_AGENT` | Your bot's user agent. Set this to avoid rate limits by APIs. |
 
 ## Usage
 
